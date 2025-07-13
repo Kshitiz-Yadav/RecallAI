@@ -1,0 +1,27 @@
+services:
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Recal!^1
+      POSTGRES_DB: recall_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ../Backend
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
+    ports:
+      - "7070:7070"
+
+volumes:
+  pgdata:
