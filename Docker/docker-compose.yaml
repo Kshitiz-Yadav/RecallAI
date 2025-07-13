@@ -1,0 +1,46 @@
+services:
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Recal!^1
+      POSTGRES_DB: recall_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ../Backend
+      dockerfile: API/Dockerfile
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
+    ports:
+      - "7070:7070"
+  
+  migrator:
+    build:
+      context: ../Backend
+      dockerfile: Migrator/Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
+
+
+volumes:
+  pgdata:
