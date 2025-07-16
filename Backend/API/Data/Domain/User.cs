@@ -1,4 +1,4 @@
-namespace RecallAI.Models;
+namespace API.Data.Domain;
 
 public class User
 {

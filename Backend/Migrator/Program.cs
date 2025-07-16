@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Backend.Data;
+using API.Data;
 
 Console.WriteLine("🚀 Running EF Core migrations...");
 

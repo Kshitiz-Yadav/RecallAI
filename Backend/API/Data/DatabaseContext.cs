@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RecallAI.Models;
+﻿using API.Data.Domain;
+using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Data;
+namespace API.Data;
 
 public class DatabaseContext : DbContext
 {
