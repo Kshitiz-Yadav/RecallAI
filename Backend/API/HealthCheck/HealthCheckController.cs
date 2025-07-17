@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Data.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
