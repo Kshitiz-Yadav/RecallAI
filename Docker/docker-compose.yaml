@@ -30,7 +30,7 @@ services:
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
     ports:
       - "7070:7070"
-  
+
   migrator:
     build:
       context: ../Backend
@@ -41,6 +41,12 @@ services:
     environment:
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
 
+  frontend:
+    build:
+      context: ../Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
 
 volumes:
   pgdata:
