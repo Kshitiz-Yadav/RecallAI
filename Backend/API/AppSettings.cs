@@ -1,6 +1,7 @@
-﻿namespace Backend;
+﻿namespace API;
 
 public class AppSettings
 {
-    public string DatabaseConnectionString { get; set; }
+    public required string DatabaseConnectionString { get; set; }
+    public required string JwtSecret { get; set; }
 }
