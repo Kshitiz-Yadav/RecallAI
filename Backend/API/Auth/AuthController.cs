@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using API.Data;
 using API.Data.Domain;
+using API.Dto.Auth;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Auth;
 
@@ -17,9 +19,9 @@ public class AuthController : Controller
     private readonly AppSettings _appSettings;
     private readonly DatabaseContext _dbContext;
     private readonly PasswordHasher<object> _passwordHasher;
-    private readonly Logger<AuthController> _logger;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(AppSettings appSettings, DatabaseContext dbContext, Logger<AuthController> logger)
+    public AuthController(AppSettings appSettings, DatabaseContext dbContext, ILogger<AuthController> logger)
     {
         _passwordHasher = new PasswordHasher<object>();
         _appSettings = appSettings;
@@ -28,33 +30,35 @@ public class AuthController : Controller
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser(string userName, string password)
+    public async Task<IActionResult> RegisterUser([FromBody] UserCredentials credentials)
     {
-        _logger.LogInformation("Register User request received for {userName}", userName);
-        userName = userName.ToLower();
-        var user = await _dbContext.Users.FirstOrDefaultAsync<User>(u => u.Email ==  userName);
+        _logger.LogInformation("Register User request received for {userName}", credentials.Email);
+        var username = credentials.Email.ToLower();
+        var password = credentials.Password;
+        var user = await _dbContext.Users.FirstOrDefaultAsync<User>(u => u.Email ==  username);
         if(user != null)
         {
-            _logger.LogError("Error while registering user {userName}: Username already exists.", userName);
+            _logger.LogError("Error while registering user {userName}: Username already exists.", username);
             return BadRequest("Username already exists.");
         }
 
         await _dbContext.AddAsync<User>(new User
         {
-            Email = userName,
+            Email = username,
             PasswordHash = HashPassword(password)
         });
         await _dbContext.SaveChangesAsync();
 
-        _logger.LogInformation("User {userName} created successfully", userName);
+        _logger.LogInformation("User {userName} created successfully", username);
         return Created();
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(string username, string password)
+    public async Task<IActionResult> Login([FromBody] UserCredentials credentials)
     {
-        _logger.LogInformation("Login request received for {userName}", username);
-        username = username.ToLower();
+        _logger.LogInformation("Login request received for {userName}", credentials.Email);
+        var username = credentials.Email.ToLower();
+        var password = credentials.Password;
         var user = await _dbContext.Users.FirstOrDefaultAsync<User>(u => u.Email == username);
         if(user == null)
         {
