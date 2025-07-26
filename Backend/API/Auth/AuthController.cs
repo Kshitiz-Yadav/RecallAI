@@ -49,6 +49,21 @@ public class AuthController : Controller
         });
         await _dbContext.SaveChangesAsync();
 
+        var storedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
+        if (storedUser == null)
+        {
+            _logger.LogError("Could not create user successfully.");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "Could not create user successfully..");
+        }
+
+        await _dbContext.AddAsync<UserLimits>(new UserLimits
+        {
+            UserId = storedUser.Id,
+            MaxStorage = _appSettings.FileStorageLimit,
+            UsedStorage = 0
+        });
+        await _dbContext.SaveChangesAsync();
+
         _logger.LogInformation("User {userName} created successfully", username);
         return Created();
     }
@@ -70,7 +85,7 @@ public class AuthController : Controller
             return BadRequest("The username and password do not match");
         }
 
-        return new OkObjectResult(GenerateToken(username));
+        return new OkObjectResult(GenerateToken(user));
     }
 
     private string HashPassword(string password)
@@ -83,7 +98,7 @@ public class AuthController : Controller
         return _passwordHasher.VerifyHashedPassword(null, hash, password) == PasswordVerificationResult.Success;
     }
 
-    private string GenerateToken(string userId)
+    private string GenerateToken(User user)
     {
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -92,7 +107,8 @@ public class AuthController : Controller
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([
-            new Claim(ClaimTypes.NameIdentifier, userId)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email)
         ]),
             Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

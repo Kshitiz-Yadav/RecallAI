@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using API.Data;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 Console.WriteLine("🚀 Running EF Core migrations...");
 
@@ -14,7 +15,12 @@ if (string.IsNullOrWhiteSpace(connectionString))
     return;
 }
 
-optionsBuilder.UseNpgsql(connectionString);
+optionsBuilder.UseNpgsql(connectionString)
+    .ConfigureWarnings(warnings =>
+    {
+        warnings.Ignore(RelationalEventId.PendingModelChangesWarning);
+    });
+
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 using var context = new DatabaseContext(optionsBuilder.Options);
