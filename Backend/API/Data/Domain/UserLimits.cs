@@ -6,6 +6,6 @@ public class UserLimits
 {
     [Key]
     public int UserId { get; set; }
-    public int MaxStorage { get; set; }
-    public int UsedStorage { get; set; }
+    public long MaxStorage { get; set; }
+    public long UsedStorage { get; set; }
 }

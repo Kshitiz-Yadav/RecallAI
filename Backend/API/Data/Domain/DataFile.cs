@@ -9,6 +9,6 @@ public class DataFile
     public required string Name { get; set; }
     public required string RawContent { get; set; }
     public DateTime UploadDate { get; set; }
-    public int Size { get; set; }
+    public long Size { get; set; }
     public int UserId { get; set; }
 }
