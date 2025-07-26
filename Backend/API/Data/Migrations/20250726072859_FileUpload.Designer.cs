@@ -3,21 +3,24 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Backend.Data.Migrations
+namespace API.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250726072859_FileUpload")]
+    partial class FileUpload
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,8 +38,8 @@ namespace Backend.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Size")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
@@ -78,11 +81,11 @@ namespace Backend.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
 
-                    b.Property<long>("MaxStorage")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MaxStorage")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("UsedStorage")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UsedStorage")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId");
 
