@@ -5,7 +5,11 @@ namespace API.Data;
 
 public class DatabaseContext : DbContext
 {
-    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options){}
+    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
     public DbSet<User> Users { get; set; }
+
+    public DbSet<UserLimits> UserLimits { get; set; }
+
+    public DbSet<DataFile> Files { get; set; }
 }
