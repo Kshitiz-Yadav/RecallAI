@@ -86,7 +86,7 @@ public class FilesManagementController : Controller
         var validationResult = ValidateFile(file);
         if (validationResult.Count > 0)
         {
-            return new BadRequestObjectResult(string.Join(". ", validationResult));
+            return new BadRequestObjectResult(string.Join(". ", validationResult) + '.');
         }
 
         var userLimits = await _dbContext.UserLimits.FirstOrDefaultAsync(l => l.UserId == userId);
@@ -111,7 +111,7 @@ public class FilesManagementController : Controller
         await _dbContext.AddAsync<DataFile>(new DataFile
         {
             Guid = fileGuid,
-            Name = file.Name,
+            Name = file.FileName,
             RawContent = content,
             UploadDate = DateTime.UtcNow.Date,
             Size = file.Length,

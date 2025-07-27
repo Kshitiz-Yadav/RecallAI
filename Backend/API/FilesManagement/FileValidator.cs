@@ -22,7 +22,7 @@ public static class FileValidator
 
         if (file.ContentType != "text/plain")
         {
-            errors.Add("Invalid content type");
+            errors.Add("Only text/plain content type is allowed");
         }
 
         if (string.IsNullOrWhiteSpace(file.FileName))

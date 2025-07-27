@@ -16,3 +16,24 @@ export async function healthCheckAsync() {
     const response = await api.get('/Healthcheck/health');
     return response.data;
 }
+
+const CLIENT = {
+    // File management API calls
+    async fileUploadAsync(formData){
+        try{
+
+            const response = await api.post('/FilesManagement/file', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
+    }
+}
+
+export default CLIENT;
