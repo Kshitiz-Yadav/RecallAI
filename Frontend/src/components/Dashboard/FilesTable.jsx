@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import FileViewModal from './FileViewModal';
-import { deleteFile } from '../../controllers/fileManagementController';
+import { deleteFile, getFile } from '../../controllers/fileManagementController';
 
 const FilesTable = ({ userFiles, dispatch }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showFileViewModal, setShowFileViewModal] = useState(false);
+    const [fileContent, setFileContent] = useState(null);
 
     const handleDeleteClick = (file) => {
         setSelectedFile(file);
@@ -14,7 +15,9 @@ const FilesTable = ({ userFiles, dispatch }) => {
     };
 
     const handleFileClick = async (file) => {
+        const fetchedFile = await getFile(file.guid, dispatch);
         setSelectedFile(file);
+        setFileContent(fetchedFile.rawContent);
         setShowFileViewModal(true);
     };
 
@@ -99,6 +102,7 @@ const FilesTable = ({ userFiles, dispatch }) => {
             {showFileViewModal && (
                 <FileViewModal
                     file={selectedFile}
+                    fileContent={fileContent}
                     onClose={() => setShowFileViewModal(false)}
                 />
             )}

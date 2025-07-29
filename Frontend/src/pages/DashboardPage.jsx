@@ -38,6 +38,9 @@ const DashboardPage = () => {
             <ErrorBanner errorMessage={error} />
             <SuccessBanner message={successMessage} />
             <LoadingSpinner loading={loading} />
+
+            <h3 className="text-xl font-semibold mt-8 mb-2">Uploaded Files</h3>
+            <FilesTable userFiles={userFiles} dispatch={dispatch} />
             
             {/* Could be put into a separate file upload component */}
             <h3 className="text-xl font-semibold mt-8 mb-2">Upload a new file</h3>
@@ -45,9 +48,6 @@ const DashboardPage = () => {
             <button onClick={handleFileUpload} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
                 Upload
             </button>
-
-            <h3 className="text-xl font-semibold mt-8 mb-2">Uploaded Files</h3>
-            <FilesTable userFiles={userFiles} dispatch={dispatch} />
         </div>
     );
 }

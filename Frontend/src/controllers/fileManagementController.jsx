@@ -5,8 +5,7 @@ export const initialState = {
     error: null,
     loading: false,
     successMessage: null,
-    userFiles: null,
-    fileContent: null
+    userFiles: null
 };
 
 export const fileUploadReducer = (state, action) => {
@@ -28,9 +27,9 @@ export const fileUploadReducer = (state, action) => {
         case 'DELETE_FILE_FAILURE':
             return { ...state, loading: false, successMessage: null, error: action.error };
         case 'GET_FILE_SUCCESS':
-            return { ...state, loading: false, fileContent: action.content, error: null };
+            return { ...state, loading: false, error: null };
         case 'GET_FILE_FAILURE':
-            return { ...state, loading: false, fileContent: null, successMessage: null, error: action.error };
+            return { ...state, loading: false, successMessage: null, error: action.error };
         default:
             return state;
     }
@@ -79,7 +78,7 @@ export const getFile = async (fileId, dispatch) => {
     dispatch({ type: 'LOADING_START' });
     try {
         const file = await CLIENT.getFileAsync(fileId);
-        dispatch({ type: 'GET_FILE_SUCCESS', content: file.rawContent });
+        dispatch({ type: 'GET_FILE_SUCCESS' });
         return file;
     }
     catch (error) {
