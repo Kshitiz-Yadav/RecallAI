@@ -19,14 +19,47 @@ export async function healthCheckAsync() {
 
 const CLIENT = {
     // File management API calls
-    async fileUploadAsync(formData){
-        try{
+    async fileUploadAsync(formData) {
+        try {
 
             const response = await api.post('/FilesManagement/file', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
+    },
+
+    async getAllFilesAsync() {
+        try {
+            const response = await api.get('/FilesManagement/filesSummary');
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
+    },
+
+    async getFileAsync(fileId) {
+        try {
+            const response = await api.get(`/FilesManagement/file?fileId=${fileId}`);
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
+    },
+
+    async deleteFileAsync(fileId) {
+        try {
+            const response = await api.delete(`/FilesManagement/file?fileId=${fileId}`);
             return response.data;
         }
         catch (error) {

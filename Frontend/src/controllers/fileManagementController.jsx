@@ -4,19 +4,33 @@ export const initialState = {
     file: null,
     error: null,
     loading: false,
-    successMessage: null
+    successMessage: null,
+    userFiles: null,
+    fileContent: null
 };
 
 export const fileUploadReducer = (state, action) => {
     switch (action.type) {
         case 'SET_FILE':
-            return { ...state, file: action.payload, successMessage: null, error: null };
-        case 'UPLOAD_START':
-            return { ...state, loading: true, successMessage: null, error: null };
+            return { ...state, file: action.payload };
+        case 'LOADING_START':
+            return { ...state, loading: true };
         case 'UPLOAD_SUCCESS':
             return { ...state, loading: false, file: null, successMessage: action.message, error: null, };
         case 'UPLOAD_FAILURE':
             return { ...state, loading: false, file: null, successMessage: null, error: action.error };
+        case 'GET_ALL_FILES_SUCCESS':
+            return { ...state, loading: false, userFiles: action.data, error: null };
+        case 'GET_ALL_FILES_FAILURE':
+            return { ...state, loading: false, userFiles: null, successMessage: null, error: action.error };
+        case 'DELETE_FILE_SUCCESS':
+            return { ...state, loading: false, successMessage: action.message, error: null };
+        case 'DELETE_FILE_FAILURE':
+            return { ...state, loading: false, successMessage: null, error: action.error };
+        case 'GET_FILE_SUCCESS':
+            return { ...state, loading: false, fileContent: action.content, error: null };
+        case 'GET_FILE_FAILURE':
+            return { ...state, loading: false, fileContent: null, successMessage: null, error: action.error };
         default:
             return state;
     }
@@ -29,8 +43,46 @@ export const uploadFile = async (file, dispatch) => {
         formData.append('File', file);
         await CLIENT.fileUploadAsync(formData);
         dispatch({ type: 'UPLOAD_SUCCESS', message: 'File uploaded successfully!' });
+
+        await getFilesSummary(dispatch);
     } 
     catch (error) {
         dispatch({ type: 'UPLOAD_FAILURE', error: error.message || 'An unknown error occured while uploading the file.' });
+    }
+}
+
+export const getFilesSummary = async (dispatch) => {
+    dispatch({ type: 'LOADING_START' });
+    try{
+        const files = await CLIENT.getAllFilesAsync();
+        dispatch({ type: 'GET_ALL_FILES_SUCCESS', data: files });
+    }
+    catch (error) {
+        dispatch({ type: 'GET_ALL_FILES_FAILURE', error: error.message || 'An unknown error occurred while fetching files.' });
+    }
+}
+
+export const deleteFile = async (fileId, dispatch) => {
+    dispatch({ type: 'LOADING_START' });
+    try {
+        await CLIENT.deleteFileAsync(fileId);
+        dispatch({ type: 'DELETE_FILE_SUCCESS', message: 'File deleted successfully!' });
+
+        await getFilesSummary(dispatch);
+    }
+    catch (error) {
+        dispatch({ type: 'DELETE_FILE_FAILURE', error: error.message || 'An unknown error occurred while deleting the file.' });
+    }
+}
+
+export const getFile = async (fileId, dispatch) => {
+    dispatch({ type: 'LOADING_START' });
+    try {
+        const file = await CLIENT.getFileAsync(fileId);
+        dispatch({ type: 'GET_FILE_SUCCESS', content: file.rawContent });
+        return file;
+    }
+    catch (error) {
+        dispatch({ type: 'GET_FILE_FAILURE', error: error.message || 'An unknown error occurred while deleting the file.' });
     }
 }
