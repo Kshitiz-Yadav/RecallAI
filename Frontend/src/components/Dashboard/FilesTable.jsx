@@ -55,6 +55,7 @@ const FilesTable = ({ userFiles, dispatch }) => {
                         <th className="px-4 py-2">Filename</th>
                         <th className="px-4 py-2">Upload Date</th>
                         <th className="px-4 py-2">Size</th>
+                        <th className="px-4 py-2">Status</th>
                         <th className="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -71,6 +72,19 @@ const FilesTable = ({ userFiles, dispatch }) => {
                                 </td>
                                 <td className="px-4 py-2">{formatDate(file.uploadDate)}</td>
                                 <td className="px-4 py-2">{formatFileSize(file.size)}</td>
+                                <td className="px-4 py-2">
+                                    <div className="relative group">
+                                        <span className="cursor-help">
+                                            {file.status === 0 ? 'Uploaded' : 
+                                             file.status === 1 ? 'Processing' : 
+                                             file.status === 2 ? 'Ready' : 'Unknown'}
+                                        </span>
+                                        <div className="hidden group-hover:block absolute z-10 p-2 bg-gray-800 text-white text-xs rounded shadow-lg bottom-full mb-1 left-0 whitespace-nowrap">
+                                            {file.status < 2 ? "File will be ready to recall soon" : "File is ready to be recalled"}
+                                            <div className="absolute -bottom-1 left-4 w-2 h-2 bg-gray-800 rotate-45"></div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td className="px-4 py-2">
                                     <button
                                         onClick={() => handleDeleteClick(file)}
