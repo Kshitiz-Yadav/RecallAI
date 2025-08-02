@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Data.Domain;
 
@@ -11,4 +12,5 @@ public class DataFile
     public DateTime UploadDate { get; set; }
     public long Size { get; set; }
     public int UserId { get; set; }
+    public FileStatus Status { get; set; }
 }
