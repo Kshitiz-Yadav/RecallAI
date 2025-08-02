@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Data.Domain;
 using API.Dto.FileManagement;
+using API.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +64,8 @@ public class FilesManagementController : Controller
                 Guid = f.Guid,
                 Name = f.Name,
                 Size = f.Size,
-                UploadDate = f.UploadDate.Date
+                UploadDate = f.UploadDate.Date,
+                Status = f.Status
             })
             .ToListAsync();
 
@@ -115,7 +117,8 @@ public class FilesManagementController : Controller
             RawContent = content,
             UploadDate = DateTime.UtcNow.Date,
             Size = file.Length,
-            UserId = userId
+            UserId = userId,
+            Status = FileStatus.Uploaded
         });
 
         userLimits.UsedStorage += file.Length;
