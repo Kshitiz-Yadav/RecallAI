@@ -73,6 +73,28 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// NServiceBus
+builder.Host.UseNServiceBus(context =>
+{
+    var endpointConfiguration = new EndpointConfiguration("FileEmbeddingService");
+
+    endpointConfiguration.UseSerialization<NewtonsoftJsonSerializer>();
+
+    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+    transport.ConnectionString(appSettings.NServiceBusConnectionString);
+    transport.UseConventionalRoutingTopology(QueueType.Classic);
+    transport.DisableBrokerRequirementChecks(BrokerRequirementChecks.None);
+
+    endpointConfiguration.UsePersistence<LearningPersistence>();
+
+    endpointConfiguration.SendFailedMessagesTo("error");
+    endpointConfiguration.AuditProcessedMessagesTo("audit");
+
+    endpointConfiguration.EnableInstallers();
+
+    return endpointConfiguration;
+});
+
 // Defined URL host for Docker mapping
 builder.WebHost.UseUrls("http://0.0.0.0:7070");
 

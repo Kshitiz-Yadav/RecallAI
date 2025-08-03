@@ -25,9 +25,12 @@ services:
         condition: service_completed_successfully
       database:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
+      NServiceBusConnectionString: host=rabbitmq;username=recall_ai_user;password=Recal!^1_dev
     ports:
       - "7070:7070"
 
@@ -47,6 +50,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: recall_ai_user
+      RABBITMQ_DEFAULT_PASS: Recal!^1_dev
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
 volumes:
   pgdata:
