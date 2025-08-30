@@ -32,6 +32,10 @@ const DashboardPage = () => {
         }
     }
 
+    const handleRefresh = () => {
+        getFilesSummary(dispatch);
+    }
+
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
@@ -40,6 +44,9 @@ const DashboardPage = () => {
             <LoadingSpinner loading={loading} />
 
             <h3 className="text-xl font-semibold mt-8 mb-2">Uploaded Files</h3>
+            <button onClick={handleRefresh} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mb-4">
+                Refresh
+            </button>
             <FilesTable userFiles={userFiles} dispatch={dispatch} />
             
             {/* Could be put into a separate file upload component */}
