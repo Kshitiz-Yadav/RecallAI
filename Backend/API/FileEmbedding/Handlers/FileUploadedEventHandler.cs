@@ -24,7 +24,6 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
     {
         try
         {
-
             _logger.LogInformation("File upload event received for {fileGuid}", message.Guid);
 
             var file = await _dbContext.Files.FirstOrDefaultAsync(f => f.Guid == message.Guid, context.CancellationToken);
@@ -55,7 +54,7 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
 
             file.Status = FileStatus.Embedded;
             await _dbContext.SaveChangesAsync(context.CancellationToken);
-            _logger.LogInformation("File uembedding successfully completed for {fileGuid}", message.Guid);
+            _logger.LogInformation("File embedding successfully completed for {fileGuid}", message.Guid);
         }
         catch (Exception ex)
         {
