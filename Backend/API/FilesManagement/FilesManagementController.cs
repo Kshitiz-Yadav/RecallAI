@@ -159,7 +159,7 @@ public class FilesManagementController : Controller
 
         userLimits.UsedStorage -= file.Size;
 
-        var fileDeletedEvent = new FileDeletedEvent { Guid = fileId };
+        var fileDeletedEvent = new FileDeletedEvent { Guid = fileId, UserId = file.UserId };
         await _messageSession.Publish(fileDeletedEvent);
 
         _dbContext.Files.Remove(file);

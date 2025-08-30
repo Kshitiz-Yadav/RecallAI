@@ -24,7 +24,6 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
     {
         try
         {
-
             _logger.LogInformation("File upload event received for {fileGuid}", message.Guid);
 
             var file = await _dbContext.Files.FirstOrDefaultAsync(f => f.Guid == message.Guid, context.CancellationToken);
