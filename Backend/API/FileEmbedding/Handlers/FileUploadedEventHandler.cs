@@ -55,7 +55,7 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
 
             file.Status = FileStatus.Embedded;
             await _dbContext.SaveChangesAsync(context.CancellationToken);
-            _logger.LogInformation("File uembedding successfully completed for {fileGuid}", message.Guid);
+            _logger.LogInformation("File embedding successfully completed for {fileGuid}", message.Guid);
         }
         catch (Exception ex)
         {

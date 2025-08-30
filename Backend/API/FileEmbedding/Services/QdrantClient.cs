@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
 using System.Text.Json;
 
 namespace API.FileEmbedding.Services;
@@ -51,4 +52,33 @@ public class QdrantClient
 
         res.EnsureSuccessStatusCode();
     }
+
+    public async Task DeleteEmbeddingsByFileIdAsync(string collectionName, string fileId)
+    {
+        var existingCollection = await _httpClient.GetAsync($"{_qdrantUrl}/collections/{collectionName}");
+        if (!existingCollection.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var payload = new
+        {
+            filter = new
+            {
+                @must = new[]
+                {
+                    new { key = "fileGuid", match = new { value = fileId } }
+                }
+            }
+        };
+
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{_qdrantUrl}/collections/{collectionName}/points/delete")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+        };
+
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+    }
+
 }
