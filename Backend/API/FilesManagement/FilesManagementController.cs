@@ -2,6 +2,7 @@
 using API.Data.Domain;
 using API.Dto.FileManagement;
 using API.Enums;
+using API.FileEmbedding.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ public class FilesManagementController : Controller
 {
     private readonly ILogger<FilesManagementController> _logger;
     private readonly DatabaseContext _dbContext;
+    private readonly IMessageSession _messageSession;
 
-    public FilesManagementController(DatabaseContext dbContext, ILogger<FilesManagementController> logger)
+    public FilesManagementController(DatabaseContext dbContext, ILogger<FilesManagementController> logger, IMessageSession messageSession)
     {
         _dbContext = dbContext;
         _logger = logger;
+        _messageSession = messageSession;
     }
 
     [HttpGet("file")]
@@ -123,6 +126,9 @@ public class FilesManagementController : Controller
 
         userLimits.UsedStorage += file.Length;
         await _dbContext.SaveChangesAsync();
+
+        var fileAddedEvent = new FileUploadedEvent { Guid =  fileGuid };
+        await _messageSession.Publish(fileAddedEvent);
 
         return StatusCode((int)HttpStatusCode.Created, $"File uploaded successfully. File Guid: {fileGuid}");
     }

@@ -6,4 +6,6 @@ public class AppSettings
     public required string JwtSecret { get; set; }
     public int FileStorageLimit { get; set; }
     public required string NServiceBusConnectionString { get; set; }
+    public required string OpenAiKey { get; set; }
+    public required string QdrantUrl { get; set; }
 }

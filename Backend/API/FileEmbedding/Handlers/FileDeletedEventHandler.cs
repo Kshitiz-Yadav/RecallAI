@@ -2,9 +2,9 @@
 
 namespace API.FileEmbedding.Handlers;
 
-public class FileDeletedMessageHandler : IHandleMessages<FileDeletedMessage>
+public class FileDeletedEventHandler : IHandleMessages<FileDeletedEvent>
 {
-    public Task Handle(FileDeletedMessage message, IMessageHandlerContext context)
+    public Task Handle(FileDeletedEvent message, IMessageHandlerContext context)
     {
         Console.WriteLine($"[FileDeletedHandler] File deleted: {message.Guid}");
         return Task.CompletedTask;
