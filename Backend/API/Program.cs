@@ -1,5 +1,6 @@
 ﻿using API;
 using API.Data;
+using API.FileEmbedding.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -100,6 +101,10 @@ builder.WebHost.UseUrls("http://0.0.0.0:7070");
 
 // Database
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(appSettings?.DatabaseConnectionString));
+
+// Services
+builder.Services.AddScoped<IQdrantClient, QdrantClient>();
+builder.Services.AddScoped<IOpenAiEmbedder, OpenAiEmbedder>();
 
 var app = builder.Build();
 

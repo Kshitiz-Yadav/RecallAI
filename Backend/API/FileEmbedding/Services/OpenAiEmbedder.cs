@@ -4,17 +4,17 @@ using System.Text.Json;
 
 namespace API.FileEmbedding.Services;
 
-public class OpenAiEmbedder
+public class OpenAiEmbedder : IOpenAiEmbedder
 {
     private readonly HttpClient _client;
     private readonly string _apiKey;
     private const string EmbeddingUrl = "https://api.openai.com/v1/embeddings";
     private const string EmbeddingModel = "text-embedding-3-small";
 
-    public OpenAiEmbedder(string apiKey)
+    public OpenAiEmbedder(AppSettings appSettings)
     {
         _client = new HttpClient();
-        _apiKey = apiKey;
+        _apiKey = appSettings.OpenAiKey;
     }
 
     public async Task<List<float>> EmbedTextAsync(string text)
