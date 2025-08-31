@@ -1,17 +1,18 @@
-﻿using System.Collections;
+﻿using API.Dto.Qdrant;
 using System.Text;
 using System.Text.Json;
 
 namespace API.FileEmbedding.Services;
 
-public class QdrantClient
+public class QdrantClient : IQdrantClient
 {
     private readonly HttpClient _httpClient = new();
     private readonly string _qdrantUrl;
-
-    public QdrantClient(string qdrantUrl)
+    private readonly ILogger<QdrantClient> _logger;
+    public QdrantClient(AppSettings appSettings, ILogger<QdrantClient> logger)
     {
-        _qdrantUrl = qdrantUrl;
+        _qdrantUrl = appSettings.QdrantUrl;
+        _logger = logger;
     }
 
     public async Task CreateCollectionIfNotExistsAsync(string collectionName)

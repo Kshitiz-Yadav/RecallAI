@@ -1,5 +1,4 @@
 ﻿using API.Data;
-using API.Dto.FileEmbedding;
 using API.Enums;
 using API.FileEmbedding.Messages;
 using API.FileEmbedding.Services;
@@ -11,13 +10,15 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
 {
     private readonly DatabaseContext _dbContext;
     private readonly ILogger<FileUploadedEventHandler> _logger;
-    private readonly AppSettings _appSettings;
+    private readonly IQdrantClient _qdrantClient;
+    private readonly IOpenAiEmbedder _openAiEmbedder;
 
-    public FileUploadedEventHandler(DatabaseContext dbContext, ILogger<FileUploadedEventHandler> logger, AppSettings appSettings)
+    public FileUploadedEventHandler(DatabaseContext dbContext, ILogger<FileUploadedEventHandler> logger, IQdrantClient qdrantClient, IOpenAiEmbedder openAiEmbedder)
     {
         _dbContext = dbContext;
         _logger = logger;
-        _appSettings = appSettings;
+        _qdrantClient = qdrantClient;
+        _openAiEmbedder = openAiEmbedder;
     }
 
     public async Task Handle(FileUploadedEvent message, IMessageHandlerContext context)
@@ -36,15 +37,13 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
             file.Status = FileStatus.Queued;
             await _dbContext.SaveChangesAsync(context.CancellationToken);
 
-            var embedder = new OpenAiEmbedder(_appSettings.OpenAiKey);
-            var qdrantClient = new QdrantClient(_appSettings.QdrantUrl);
-            await qdrantClient.CreateCollectionIfNotExistsAsync(file.UserId.ToString());
+            await _qdrantClient.CreateCollectionIfNotExistsAsync(file.UserId.ToString());
 
             var chunks = TextChunker.ChunkText(file.RawContent);
             foreach (var chunk in chunks)
             {
-                var embedding = await embedder.EmbedTextAsync(chunk.Text);
-                await qdrantClient.UpsertChunkAsync(file.UserId.ToString(), chunk.ChunkId, embedding, new Dictionary<string, object>
+                var embedding = await _openAiEmbedder.EmbedTextAsync(chunk.Text);
+                await _qdrantClient.UpsertChunkAsync(file.UserId.ToString(), chunk.ChunkId, embedding, new Dictionary<string, object>
                 {
                     ["userId"] = file.UserId,
                     ["fileGuid"] = file.Guid,
