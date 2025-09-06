@@ -1,6 +1,6 @@
 ﻿using API;
 using API.Data;
-using API.FileEmbedding.Services;
+using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

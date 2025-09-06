@@ -1,10 +1,10 @@
 ﻿using API.Data;
 using API.Enums;
-using API.FileEmbedding.Messages;
-using API.FileEmbedding.Services;
+using API.FilesManagement.FileEmbedding.Messages;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.FileEmbedding.Handlers;
+namespace API.FilesManagement.FileEmbedding.Handlers;
 
 public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
 {

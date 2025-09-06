@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace API.FileEmbedding.Services;
+namespace API.Services;
 
 public class QdrantClient : IQdrantClient
 {

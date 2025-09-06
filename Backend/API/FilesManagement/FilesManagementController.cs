@@ -2,7 +2,7 @@
 using API.Data.Domain;
 using API.Dto.FileManagement;
 using API.Enums;
-using API.FileEmbedding.Messages;
+using API.FilesManagement.FileEmbedding.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

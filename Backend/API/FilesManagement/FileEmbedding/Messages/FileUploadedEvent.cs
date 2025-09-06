@@ -1,4 +1,4 @@
-﻿namespace API.FileEmbedding.Messages;
+﻿namespace API.FilesManagement.FileEmbedding.Messages;
 
 public class FileUploadedEvent : IEvent
 {
