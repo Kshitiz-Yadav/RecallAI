@@ -1,6 +1,6 @@
 ﻿using API.Dto.FileEmbedding;
 
-namespace API.FileEmbedding.Services;
+namespace API.Services;
 
 public static class TextChunker
 {
@@ -9,7 +9,7 @@ public static class TextChunker
         var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var chunks = new List<TextChunk>();
 
-        for (int i = 0; i < words.Length; i += (chunkSize - overlap))
+        for (int i = 0; i < words.Length; i += chunkSize - overlap)
         {
             var chunkWords = words.Skip(i).Take(chunkSize).ToArray();
             if (chunkWords.Length < overlap)

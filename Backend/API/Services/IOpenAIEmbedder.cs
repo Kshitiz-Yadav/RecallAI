@@ -1,4 +1,4 @@
-﻿namespace API.FileEmbedding.Services;
+﻿namespace API.Services;
 
 public interface IOpenAiEmbedder
 {

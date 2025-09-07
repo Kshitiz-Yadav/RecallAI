@@ -1,7 +1,7 @@
-﻿using API.FileEmbedding.Messages;
-using API.FileEmbedding.Services;
+﻿using API.FilesManagement.FileEmbedding.Messages;
+using API.Services;
 
-namespace API.FileEmbedding.Handlers;
+namespace API.FilesManagement.FileEmbedding.Handlers;
 
 public class FileDeletedEventHandler : IHandleMessages<FileDeletedEvent>
 {

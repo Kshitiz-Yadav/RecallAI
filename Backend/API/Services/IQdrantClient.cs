@@ -1,6 +1,6 @@
 ﻿using API.Dto.Qdrant;
 
-namespace API.FileEmbedding.Services;
+namespace API.Services;
 
 public interface IQdrantClient
 {

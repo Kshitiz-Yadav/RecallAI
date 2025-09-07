@@ -1,6 +1,6 @@
 ﻿using API;
 using API.Data;
-using API.FileEmbedding.Services;
+using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -105,6 +105,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(appS
 // Services
 builder.Services.AddScoped<IQdrantClient, QdrantClient>();
 builder.Services.AddScoped<IOpenAiEmbedder, OpenAiEmbedder>();
+builder.Services.AddScoped<IOpenAiChatClient, OpenAiChatClient>();
 
 var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿using API.Dto.Chat;
-using API.FileEmbedding.Services;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -15,16 +15,18 @@ public class ChatController : Controller
     private readonly ILogger<ChatController> _logger;
     private readonly IOpenAiEmbedder _openAiEmbedder;
     private readonly IQdrantClient _qdrantClient;
+    private readonly IOpenAiChatClient _openAiChatClient;
 
-    public ChatController(ILogger<ChatController> logger, IOpenAiEmbedder openAiEmbedder, IQdrantClient qdrantClient)
+    public ChatController(ILogger<ChatController> logger, IOpenAiEmbedder openAiEmbedder, IQdrantClient qdrantClient, IOpenAiChatClient openAiChatClient)
     {
         _logger = logger;
         _openAiEmbedder = openAiEmbedder;
         _qdrantClient = qdrantClient;
+        _openAiChatClient = openAiChatClient;
     }
 
     [HttpPost]
-    public async Task<IActionResult> AskQuestion([FromBody] AskQuestionRequest request, CancellationToken _)
+    public async Task<IActionResult> AskQuestion([FromBody] AskQuestionRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Ask question request received");
         var userIdHeader = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -37,11 +39,17 @@ public class ChatController : Controller
         var embedding = await _openAiEmbedder.EmbedTextAsync(request.Question);
         _logger.LogInformation("Question Embedded Successfully");
 
-        var results = await _qdrantClient.SearchAsync(userId.ToString(), request.FileGuids, embedding, request.TopK);
-        _logger.LogInformation("{num} Relevant Chunks Retrieved Successfully", results.Count);
+        var chunks = await _qdrantClient.SearchAsync(userId.ToString(), request.FileGuids, embedding, request.TopK);
+        _logger.LogInformation("{num} Relevant Chunks Retrieved Successfully", chunks.Count);
 
-        // LLM Intergation Pending
+        var chatResponse = await _openAiChatClient.GetAnswerAsync(request.Question, chunks, request.ChatModel, request.MaxWords, cancellationToken);
+        if (!chatResponse.IsSuccessful)
+        {
+            _logger.LogError("Failed to get LLM response: {status}", chatResponse.StatusCode);
+            return StatusCode((int)chatResponse.StatusCode, chatResponse.Response);
+        }
 
-        return Ok(results);
+        _logger.LogInformation("LLM response fetched successfully.");
+        return Ok(chatResponse);
     }
 }

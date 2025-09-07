@@ -8,4 +8,5 @@ public class AppSettings
     public required string NServiceBusConnectionString { get; set; }
     public required string OpenAiKey { get; set; }
     public required string QdrantUrl { get; set; }
+    public required string SystemPrompt { get; set; }
 }
