@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Claims;
 using static API.FilesManagement.FileValidator;
+using static API.FilesManagement.FileReader;
 
 namespace API.FilesManagement;
 
@@ -77,7 +78,7 @@ public class FilesManagementController : Controller
 
     [HttpPost("file")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadTextFile([FromForm] FileUploadRequest request)
+    public async Task<IActionResult> UploadFile([FromForm] FileUploadRequest request)
     {
         _logger.LogInformation("File upload request received for file: {filename}", request.File.FileName);
         var userIdHeader = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -106,11 +107,7 @@ public class FilesManagementController : Controller
             return StatusCode((int)HttpStatusCode.BadRequest, "You will exceed your storage limit on uploading this file. Delete previous files to add more.");
         }
 
-        string content;
-        using (var reader = new StreamReader(file.OpenReadStream()))
-        {
-            content = await reader.ReadToEndAsync();
-        }
+        var content = await ReadFile(file);
 
         var fileGuid = Guid.NewGuid().ToString();
         await _dbContext.AddAsync<DataFile>(new DataFile

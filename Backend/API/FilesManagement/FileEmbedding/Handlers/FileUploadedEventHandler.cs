@@ -3,6 +3,7 @@ using API.Enums;
 using API.FilesManagement.FileEmbedding.Messages;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace API.FilesManagement.FileEmbedding.Handlers;
 
@@ -39,7 +40,8 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
 
             await _qdrantClient.CreateCollectionIfNotExistsAsync(file.UserId.ToString());
 
-            var chunks = TextChunker.ChunkText(file.RawContent);
+            var content = CleanContent(file.RawContent);
+            var chunks = TextChunker.ChunkText(content);
             foreach (var chunk in chunks)
             {
                 var embedding = await _openAiEmbedder.EmbedTextAsync(chunk.Text);
@@ -59,5 +61,15 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
         {
             _logger.LogError("File embedding failed: {error}",  ex.Message);
         }
+    }
+
+    private static string CleanContent(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return string.Empty;
+        }
+
+        return Regex.Replace(content, @"\s+", " ").Trim();
     }
 }
