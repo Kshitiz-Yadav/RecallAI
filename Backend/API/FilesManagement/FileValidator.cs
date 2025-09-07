@@ -4,6 +4,8 @@ public static class FileValidator
 {
 
     private const long MaxFileSize = 2 * 1024 * 1024; // 5 MB
+    private static readonly List<string> AllowedFileExtensions = [".txt", ".pdf"];
+    private static readonly List<string> AllowedContentTypes = ["text/plain", "application/pdf", "application/x-pdf", "application/octet-stream"];
 
     public static List<string> ValidateFile(IFormFile file)
     {
@@ -15,14 +17,14 @@ public static class FileValidator
         }
 
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        if (extension != ".txt")
+        if (!AllowedFileExtensions.Contains(extension))
         {
-            errors.Add("Only .txt files are allowed");
+            errors.Add($"Only {string.Join(", ", AllowedFileExtensions)} files are allowed");
         }
 
-        if (file.ContentType != "text/plain")
+        if (!AllowedContentTypes.Contains(file.ContentType))
         {
-            errors.Add("Only text/plain content type is allowed");
+            errors.Add($"Only {string.Join(", ", AllowedContentTypes)} content types are allowed");
         }
 
         if (string.IsNullOrWhiteSpace(file.FileName))
