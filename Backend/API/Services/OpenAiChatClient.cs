@@ -1,0 +1,89 @@
+﻿
+using API.Dto.Chat;
+using API.Dto.Qdrant;
+using API.Enums;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace API.Services;
+
+public class OpenAiChatClient : IOpenAiChatClient
+{
+    private readonly HttpClient _client;
+    private readonly ILogger<OpenAiChatClient> _logger;
+    private readonly string _apiKey;
+    private const string OpenAiResponsesUri = "https://api.openai.com/v1/responses";
+    private readonly string _systemPrompt;
+
+    public OpenAiChatClient(ILogger<OpenAiChatClient> logger, AppSettings appSettings)
+    {
+        _client = new HttpClient();
+        _logger = logger;
+        _apiKey = appSettings.OpenAiKey;
+        _systemPrompt = appSettings.SystemPrompt;
+    }
+
+    public async Task<ChatResponse> GetAnswerAsync(string question, List<SearchResult> chunks, ChatModel model, int maxWords, CancellationToken cancellationToken)
+    {
+        var prompt = BuildInputPrompt(question, chunks);
+        var requestBody = new OpenAiChatRequest
+        {
+            Model = model.ToModelString(),
+            Input = new List<OpenAiChatInputItem>
+            {
+                new() { Role = "system", Content = _systemPrompt },
+                new() { Role = "user", Content = prompt }
+            },
+            MaxOutputTokens = (maxWords / 3) * 4   // 1 token -> 3/4 word
+        };
+
+        var requestJson = JsonSerializer.Serialize(requestBody);
+
+        var request = new HttpRequestMessage(HttpMethod.Post, OpenAiResponsesUri)
+        {
+            Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+        };
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        var response = await _client.SendAsync(request, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorText = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogError("OpenAI request failed: {status} - {error}", response.StatusCode, errorText);
+            return new ChatResponse
+            {
+                IsSuccessful = false,
+                StatusCode = response.StatusCode,
+                Response = $"Failed to get LLM response: {errorText}"
+            };
+        }
+
+        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+        var responseBody = JsonSerializer.Deserialize<OpenAiChatResponse>(responseJson);
+        var output = responseBody?.OutputText ?? string.Join(" ", responseBody?.Output.SelectMany(o => o.Content.Select(c => c.Text)) ?? new List<string>());
+
+        return new ChatResponse
+        {
+            IsSuccessful = true,
+            StatusCode = response.StatusCode,
+            Response = output
+        };
+    }
+
+    private static string BuildInputPrompt(string question, List<SearchResult> chunks)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Use the following notes to answer the question that follows.");
+        sb.AppendLine();
+        sb.AppendLine("Notes:");
+        foreach (var chunk in chunks)
+        {
+            sb.AppendLine($"- {chunk.Content}");
+        }
+        sb.AppendLine();
+        sb.AppendLine($"Question: {question}");
+        return sb.ToString();
+    }
+}
