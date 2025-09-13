@@ -12,4 +12,6 @@ public class DatabaseContext : DbContext
     public DbSet<UserLimits> UserLimits { get; set; }
 
     public DbSet<DataFile> Files { get; set; }
+
+    public DbSet<ChatHistory> ChatHistory { get; set; }
 }
