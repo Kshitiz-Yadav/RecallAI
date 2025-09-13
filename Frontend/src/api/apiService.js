@@ -66,6 +66,18 @@ const CLIENT = {
             const errorMessage = error?.response?.data || error.message || error;
             throw new Error(errorMessage);
         }
+    },
+
+    // Chat history API calls
+    async getChatHistoryAsync(skip = 0, top = 0) {
+        try {
+            const response = await api.get(`/ChatHistory?skip=${skip}&top=${top}`);
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
     }
 }
 
