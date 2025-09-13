@@ -1,9 +1,10 @@
-﻿using API.Dto.Chat;
+﻿using API.Data;
+using API.Data.Domain;
+using API.Dto.Chat;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Security.Claims;
+using static API.Common;
 
 namespace API.Chat;
 
@@ -16,25 +17,23 @@ public class ChatController : Controller
     private readonly IOpenAiEmbedder _openAiEmbedder;
     private readonly IQdrantClient _qdrantClient;
     private readonly IOpenAiChatClient _openAiChatClient;
+    private readonly DatabaseContext _dbContext;
+    private const string InsufficientInfoMsg = "Sorry! I could not find relevant information in your notes.";
 
-    public ChatController(ILogger<ChatController> logger, IOpenAiEmbedder openAiEmbedder, IQdrantClient qdrantClient, IOpenAiChatClient openAiChatClient)
+    public ChatController(ILogger<ChatController> logger, IOpenAiEmbedder openAiEmbedder, IQdrantClient qdrantClient, IOpenAiChatClient openAiChatClient, DatabaseContext dbContext)
     {
         _logger = logger;
         _openAiEmbedder = openAiEmbedder;
         _qdrantClient = qdrantClient;
         _openAiChatClient = openAiChatClient;
+        _dbContext = dbContext;
     }
 
     [HttpPost]
     public async Task<IActionResult> AskQuestion([FromBody] AskQuestionRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Ask question request received");
-        var userIdHeader = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdHeader == null || !int.TryParse(userIdHeader, out int userId))
-        {
-            _logger.LogError("Valid User Id header not found");
-            return StatusCode((int)HttpStatusCode.Unauthorized, "Valid User Id header not found");
-        }
+        var userId = GetUserId(User);
 
         var embedding = await _openAiEmbedder.EmbedTextAsync(request.Question);
         _logger.LogInformation("Question Embedded Successfully");
@@ -48,6 +47,19 @@ public class ChatController : Controller
             _logger.LogError("Failed to get LLM response: {status}", chatResponse.StatusCode);
             return StatusCode((int)chatResponse.StatusCode, chatResponse.Response);
         }
+
+        if(chatResponse.Response != InsufficientInfoMsg)
+        {
+            await _dbContext.AddAsync<ChatHistory>(new ChatHistory
+            {
+                UserId = userId,
+                TimeStamp = DateTime.UtcNow,
+                Question = request.Question,
+                Answer = chatResponse.Response
+            }, cancellationToken);
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("LLM response fetched successfully.");
         return Ok(chatResponse);

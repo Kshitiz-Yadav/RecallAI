@@ -105,7 +105,10 @@ public class QdrantClient : IQdrantClient
             new StringContent(JsonSerializer.Serialize(searchRequest), Encoding.UTF8, "application/json")
         );
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return new List<SearchResult>();
+        }
 
         var json = await response.Content.ReadAsStringAsync();
         var searchResponse = JsonSerializer.Deserialize<SearchResponse>(json);
