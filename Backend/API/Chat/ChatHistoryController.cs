@@ -1,5 +1,4 @@
 ﻿using API.Data;
-using API.Data.Domain;
 using API.Dto.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +34,7 @@ public class ChatHistoryController : Controller
                 .Select(h => new ChatHistoryResponse
                 {
                     TimeStamp = h.TimeStamp,
+                    ChatModel = h.ChatModel,
                     Question = h.Question,
                     Answer = h.Answer
                 })

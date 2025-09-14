@@ -18,7 +18,7 @@ public class ChatController : Controller
     private readonly IQdrantClient _qdrantClient;
     private readonly IOpenAiChatClient _openAiChatClient;
     private readonly DatabaseContext _dbContext;
-    private const string InsufficientInfoMsg = "Sorry! I could not find relevant information in your notes.";
+    private const string InsufficientInfoMsgPrefix = "1915181825:Sorry!";
 
     public ChatController(ILogger<ChatController> logger, IOpenAiEmbedder openAiEmbedder, IQdrantClient qdrantClient, IOpenAiChatClient openAiChatClient, DatabaseContext dbContext)
     {
@@ -48,12 +48,13 @@ public class ChatController : Controller
             return StatusCode((int)chatResponse.StatusCode, chatResponse.Response);
         }
 
-        if(chatResponse.Response != InsufficientInfoMsg)
+        if(!chatResponse.Response.Contains(InsufficientInfoMsgPrefix))
         {
             await _dbContext.AddAsync<ChatHistory>(new ChatHistory
             {
                 UserId = userId,
                 TimeStamp = DateTime.UtcNow,
+                ChatModel = request.ChatModel,
                 Question = request.Question,
                 Answer = chatResponse.Response
             }, cancellationToken);
