@@ -1,13 +1,14 @@
 ﻿namespace API.Enums;
 
+// The assigned values allow direct mapping with 'Resources'
 public enum ChatModel
 {
-    Gpt4oMini,
-    Gpt4o,
-    Gpt41Mini,
-    Gpt41,
-    Gpt5Mini,
-    Gpt5
+    Gpt4oMini = 2,
+    Gpt4o = 3,
+    Gpt41Mini = 4,
+    Gpt41 = 5,
+    Gpt5Mini = 6,
+    Gpt5 = 7
 }
 
 public static class ChatModelExtensions
