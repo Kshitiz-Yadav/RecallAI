@@ -17,6 +17,7 @@ const Header = () => {
                     <li><Link to="/auth">Sign In</Link></li>
                     <li><Link to="/home" onClick={handleLogout}>Logout</Link></li>
                     <li><Link to="/chathistory">Chat History</Link></li>
+                    <li><Link to="/usage">Resource Usage</Link></li>
                 </ul>
             </nav>
         </header>

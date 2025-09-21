@@ -78,6 +78,29 @@ const CLIENT = {
             const errorMessage = error?.response?.data || error.message || error;
             throw new Error(errorMessage);
         }
+    },
+
+    // Resource usage API calls
+    async getMonthlyUsageAsync() {
+        try {
+            const response = await api.get('/Usage');
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
+    },
+
+    async getUsageLimitsAsync() {
+        try {
+            const response = await api.get('/Usage/limits');
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
     }
 }
 
