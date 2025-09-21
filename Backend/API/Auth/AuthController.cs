@@ -56,12 +56,6 @@ public class AuthController : Controller
             return StatusCode((int)HttpStatusCode.InternalServerError, "Could not create user successfully..");
         }
 
-        await _dbContext.AddAsync<UserLimits>(new UserLimits
-        {
-            UserId = storedUser.Id,
-            MaxStorage = _appSettings.FileStorageLimit,
-            UsedStorage = 0
-        });
         await _dbContext.SaveChangesAsync();
 
         _logger.LogInformation("User {userName} created successfully", username);
