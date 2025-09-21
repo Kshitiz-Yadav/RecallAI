@@ -3,7 +3,7 @@
 public static class FileValidator
 {
 
-    private const long MaxFileSize = 2 * 1024 * 1024; // 5 MB
+    private const long MaxFileSize = 3 * 1024 * 1024; // 3 MB
     private static readonly List<string> AllowedFileExtensions = [".txt", ".pdf"];
     private static readonly List<string> AllowedContentTypes = ["text/plain", "application/pdf", "application/x-pdf", "application/octet-stream"];
 
