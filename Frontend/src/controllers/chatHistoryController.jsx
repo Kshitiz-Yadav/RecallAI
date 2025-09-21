@@ -12,7 +12,7 @@ export const chatHistoryReducer = (state, action) => {
         case 'GET_CHAT_HISTORY_SUCCESS':
             return { ...state, loading: false, chatHistory: action.data, error: null };
         case 'GET_CHAT_HISTORY_FAILURE':
-            return { ...state, loading: true, chatHistory: [], error: action.error };
+            return { ...state, loading: false, chatHistory: [], error: action.error };
         default:
             return state;
     }

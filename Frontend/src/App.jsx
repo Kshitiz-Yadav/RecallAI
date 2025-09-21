@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RequireAuth from './components/Auth/RequireAuth';
 import ChatHistoryPage from './pages/ChatHistoryPage';
+import ResourceUsagePage from './pages/ResourceUsagePage';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route element={<RequireAuth />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/chathistory" element={<ChatHistoryPage />} />
+          <Route path="/usage" element={<ResourceUsagePage />} />
         </Route>
         
         <Route path="/notfound" element={<NotFoundPage />} />
