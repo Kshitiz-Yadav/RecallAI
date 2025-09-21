@@ -17,7 +17,7 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Usage>().HasNoKey();
+        modelBuilder.Entity<Usage>().HasKey(u => new { u.UserId, u.Resource, u.Month });
         base.OnModelCreating(modelBuilder);
     }
 }
