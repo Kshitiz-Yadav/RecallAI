@@ -1,14 +1,13 @@
 ﻿namespace API.Enums;
 
-// The assigned values allow direct mapping with 'Resources'
 public enum ChatModel
 {
-    Gpt4oMini = 2,
-    Gpt4o = 3,
-    Gpt41Mini = 4,
-    Gpt41 = 5,
-    Gpt5Mini = 6,
-    Gpt5 = 7
+    Gpt4oMini,
+    Gpt4o,
+    Gpt41Mini,
+    Gpt41,
+    Gpt5Mini,
+    Gpt5
 }
 
 public static class ChatModelExtensions
@@ -24,6 +23,20 @@ public static class ChatModelExtensions
             ChatModel.Gpt5Mini => "gpt-5-mini",
             ChatModel.Gpt5 => "gpt-5",
             _ => throw new ArgumentOutOfRangeException(nameof(model), model, "Unsupported ChatModel value")
+        };
+    }
+
+    public static Resource ToResource(this ChatModel model)
+    {
+        return model switch
+        {
+            ChatModel.Gpt4oMini => Resource.Gpt4oMini,
+            ChatModel.Gpt4o => Resource.Gpt4o,
+            ChatModel.Gpt41Mini => Resource.Gpt41Mini,
+            ChatModel.Gpt41 => Resource.Gpt41,
+            ChatModel.Gpt5Mini => Resource.Gpt5Mini,
+            ChatModel.Gpt5 => Resource.Gpt5,
+            _ => throw new ArgumentOutOfRangeException(nameof(model), model, "Unknown ChatModel")
         };
     }
 }

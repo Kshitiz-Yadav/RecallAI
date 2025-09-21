@@ -35,13 +35,13 @@ public class ChatController : Controller
         _logger.LogInformation("Ask question request received");
         var userId = GetUserId(User);
 
-        var embedding = await _openAiEmbedder.EmbedTextAsync(request.Question);
+        var embedding = await _openAiEmbedder.EmbedTextAsync(request.Question, userId);
         _logger.LogInformation("Question Embedded Successfully");
 
         var chunks = await _qdrantClient.SearchAsync(userId.ToString(), request.FileGuids, embedding, request.TopK);
         _logger.LogInformation("{num} Relevant Chunks Retrieved Successfully", chunks.Count);
 
-        var chatResponse = await _openAiChatClient.GetAnswerAsync(request.Question, chunks, request.ChatModel, request.MaxWords, cancellationToken);
+        var chatResponse = await _openAiChatClient.GetAnswerAsync(request.Question, chunks, request.ChatModel, request.MaxWords, userId, cancellationToken);
         if (!chatResponse.IsSuccessful)
         {
             _logger.LogError("Failed to get LLM response: {status}", chatResponse.StatusCode);
