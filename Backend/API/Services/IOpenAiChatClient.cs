@@ -6,5 +6,5 @@ namespace API.Services;
 
 public interface IOpenAiChatClient
 {
-    Task<ChatResponse> GetAnswerAsync(string question, List<SearchResult> chunks, ChatModel model, int maxWords, CancellationToken cancellationToken);
+    Task<ChatResponse> GetAnswerAsync(string question, List<SearchResult> chunks, ChatModel model, int maxWords, int userId, CancellationToken cancellationToken);
 }

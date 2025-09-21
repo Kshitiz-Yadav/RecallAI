@@ -21,4 +21,7 @@ public class OpenAiChatResponse
 
     [JsonPropertyName("output")]
     public List<OpenAiChatOutputItem> Output { get; set; } = new();
+
+    [JsonPropertyName("usage")]
+    public OpenAiChatUsageResponse? Usage { get; set; }
 }

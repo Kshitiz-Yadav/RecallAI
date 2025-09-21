@@ -44,7 +44,7 @@ public class FileUploadedEventHandler : IHandleMessages<FileUploadedEvent>
             var chunks = TextChunker.ChunkText(content);
             foreach (var chunk in chunks)
             {
-                var embedding = await _openAiEmbedder.EmbedTextAsync(chunk.Text);
+                var embedding = await _openAiEmbedder.EmbedTextAsync(chunk.Text, message.UserId);
                 await _qdrantClient.UpsertChunkAsync(file.UserId.ToString(), chunk.ChunkId, embedding, new Dictionary<string, object>
                 {
                     ["userId"] = file.UserId,

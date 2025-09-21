@@ -3,17 +3,20 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Backend.Data.Migrations
+namespace API.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250920141510_UpdatedUserLimitsTable")]
+    partial class UpdatedUserLimitsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,22 +85,18 @@ namespace Backend.Data.Migrations
 
             modelBuilder.Entity("API.Data.Domain.Usage", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Resource")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Month")
-                        .HasColumnType("text");
-
-                    b.Property<long>("InputUsed")
+                    b.Property<long>("Used")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OutputUsed")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("UserId", "Resource", "Month");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.ToTable("UserLimits");
                 });

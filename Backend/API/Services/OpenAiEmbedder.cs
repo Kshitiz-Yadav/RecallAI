@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using API.Enums;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -10,14 +11,16 @@ public class OpenAiEmbedder : IOpenAiEmbedder
     private readonly string _apiKey;
     private const string EmbeddingUrl = "https://api.openai.com/v1/embeddings";
     private const string EmbeddingModel = "text-embedding-3-small";
+    private readonly IUsageService _usageService;
 
-    public OpenAiEmbedder(AppSettings appSettings)
+    public OpenAiEmbedder(AppSettings appSettings, IUsageService usageService)
     {
         _client = new HttpClient();
         _apiKey = appSettings.OpenAiKey;
+        _usageService = usageService;
     }
 
-    public async Task<List<float>> EmbedTextAsync(string text)
+    public async Task<List<float>> EmbedTextAsync(string text, int userId)
     {
         var payload = new
         {
@@ -37,6 +40,13 @@ public class OpenAiEmbedder : IOpenAiEmbedder
 
         var json = await res.Content.ReadAsStringAsync();
         var parsed = JsonDocument.Parse(json);
+
+        var usedTokens = parsed.RootElement
+                            .GetProperty("usage")
+                            .GetProperty("prompt_tokens")
+                            .GetInt64();
+
+        await _usageService.UpdateResourceUsage(Resource.TextEmbedding3Small, userId, usedTokens);
 
         return parsed.RootElement
                      .GetProperty("data")[0]

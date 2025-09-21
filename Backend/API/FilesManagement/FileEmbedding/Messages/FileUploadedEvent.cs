@@ -3,4 +3,5 @@
 public class FileUploadedEvent : IEvent
 {
     public required string Guid { get; set; }
+    public int UserId { get; set; }
 }

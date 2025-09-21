@@ -9,9 +9,15 @@ public class DatabaseContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
-    public DbSet<UserLimits> UserLimits { get; set; }
+    public DbSet<Usage> UserLimits { get; set; }
 
     public DbSet<DataFile> Files { get; set; }
 
     public DbSet<ChatHistory> ChatHistory { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Usage>().HasKey(u => new { u.UserId, u.Resource, u.Month });
+        base.OnModelCreating(modelBuilder);
+    }
 }

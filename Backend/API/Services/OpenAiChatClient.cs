@@ -2,10 +2,10 @@
 using API.Dto.Chat;
 using API.Dto.Qdrant;
 using API.Enums;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace API.Services;
 
@@ -16,16 +16,18 @@ public class OpenAiChatClient : IOpenAiChatClient
     private readonly string _apiKey;
     private const string OpenAiResponsesUri = "https://api.openai.com/v1/responses";
     private readonly string _systemPrompt;
+    private readonly IUsageService _usageService;
 
-    public OpenAiChatClient(ILogger<OpenAiChatClient> logger, AppSettings appSettings)
+    public OpenAiChatClient(ILogger<OpenAiChatClient> logger, AppSettings appSettings, IUsageService usageService)
     {
         _client = new HttpClient();
         _logger = logger;
         _apiKey = appSettings.OpenAiKey;
         _systemPrompt = appSettings.SystemPrompt;
+        _usageService = usageService;
     }
 
-    public async Task<ChatResponse> GetAnswerAsync(string question, List<SearchResult> chunks, ChatModel model, int maxWords, CancellationToken cancellationToken)
+    public async Task<ChatResponse> GetAnswerAsync(string question, List<SearchResult> chunks, ChatModel model, int maxWords, int userId, CancellationToken cancellationToken)
     {
         var prompt = BuildInputPrompt(question, chunks);
         var requestBody = new OpenAiChatRequest
@@ -38,6 +40,20 @@ public class OpenAiChatClient : IOpenAiChatClient
             },
             MaxOutputTokens = (maxWords / 3) * 4   // 1 token -> 3/4 word
         };
+
+        var modelUsage = await _usageService.CheckResourceUsage(model.ToResource(), userId, _usageService.GetExpectedTokensCount(_systemPrompt + prompt));
+        if (modelUsage != 0)
+        {
+            _logger.LogError("Model usage limit reached with code {code}", modelUsage);
+            return new ChatResponse
+            {
+                IsSuccessful = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                Response = modelUsage == 1 ?
+                "You have reached your monthly usage limit for this model." :
+                "This requset exceeds beyond your monthly usage limit for this model."
+            };
+        }
 
         var requestJson = JsonSerializer.Serialize(requestBody);
 
@@ -62,6 +78,8 @@ public class OpenAiChatClient : IOpenAiChatClient
 
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
         var responseBody = JsonSerializer.Deserialize<OpenAiChatResponse>(responseJson);
+        await _usageService.UpdateResourceUsage(model.ToResource(), userId, responseBody?.Usage?.InputTokens ?? 0, responseBody?.Usage?.OutputTokens ?? 0);
+        
         var output = responseBody?.OutputText ?? string.Join(" ", responseBody?.Output.SelectMany(o => o.Content.Select(c => c.Text)) ?? new List<string>());
 
         return new ChatResponse

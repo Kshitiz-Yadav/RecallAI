@@ -3,6 +3,7 @@ using API.Data.Domain;
 using API.Dto.FileManagement;
 using API.Enums;
 using API.FilesManagement.FileEmbedding.Messages;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +22,14 @@ public class FilesManagementController : Controller
     private readonly ILogger<FilesManagementController> _logger;
     private readonly DatabaseContext _dbContext;
     private readonly IMessageSession _messageSession;
+    private readonly IUsageService _usageService;
 
-    public FilesManagementController(DatabaseContext dbContext, ILogger<FilesManagementController> logger, IMessageSession messageSession)
+    public FilesManagementController(DatabaseContext dbContext, ILogger<FilesManagementController> logger, IMessageSession messageSession, IUsageService usageService)
     {
         _dbContext = dbContext;
         _logger = logger;
         _messageSession = messageSession;
+        _usageService = usageService;
     }
 
     [HttpGet("file")]
@@ -95,19 +98,25 @@ public class FilesManagementController : Controller
             return new BadRequestObjectResult(string.Join(". ", validationResult) + '.');
         }
 
-        var userLimits = await _dbContext.UserLimits.FirstOrDefaultAsync(l => l.UserId == userId);
-        if (userLimits == null)
+        var fileStorageLimit = await _usageService.CheckResourceUsage(Resource.FileStorage, userId, file.Length);
+        if (fileStorageLimit != 0)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, "No limits were defined for this user");
-        }
-
-        if(userLimits.UsedStorage + file.Length > userLimits.MaxStorage)
-        {
-            _logger.LogInformation("Storage limit reached");
-            return StatusCode((int)HttpStatusCode.BadRequest, "You will exceed your storage limit on uploading this file. Delete previous files to add more.");
+            _logger.LogError("File storage limit reached with code {code}", fileStorageLimit);
+            return new BadRequestObjectResult(fileStorageLimit == 1 ?
+                "You have reached your file storage limit. Delete previous files to add more." :
+                "You will exceed your file storage limit on uploading this file. Delete previous files to add more.");
         }
 
         var content = await ReadFile(file);
+
+        var embeddingLimit = await _usageService.CheckResourceUsage(Resource.TextEmbedding3Small, userId, _usageService.GetExpectedTokensCount(content));
+        if (embeddingLimit != 0)
+        {
+            _logger.LogError("Embedding limit reached with code {code}", embeddingLimit);
+            return new BadRequestObjectResult(embeddingLimit == 1 ?
+                "You have reached your monthly file embedding limit." :
+                "You will exceed your monthly file embedding limit on uploading this file.");
+        }
 
         var fileGuid = Guid.NewGuid().ToString();
         await _dbContext.AddAsync<DataFile>(new DataFile
@@ -120,11 +129,11 @@ public class FilesManagementController : Controller
             UserId = userId,
             Status = FileStatus.Uploaded
         });
-
-        userLimits.UsedStorage += file.Length;
         await _dbContext.SaveChangesAsync();
 
-        var fileAddedEvent = new FileUploadedEvent { Guid =  fileGuid };
+        await _usageService.UpdateResourceUsage(Resource.FileStorage, userId, file.Length);
+
+        var fileAddedEvent = new FileUploadedEvent { Guid = fileGuid, UserId = userId };
         await _messageSession.Publish(fileAddedEvent);
 
         return StatusCode((int)HttpStatusCode.Created, $"File uploaded successfully. File Guid: {fileGuid}");
@@ -147,14 +156,8 @@ public class FilesManagementController : Controller
             _logger.LogError("File with id: {fileId} does not exist", fileId);
             return NotFound("File does not exist");
         }
-
-        var userLimits = await _dbContext.UserLimits.FirstOrDefaultAsync(l => l.UserId == userId);
-        if (userLimits == null)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError, "No limits were defined for this user");
-        }
-
-        userLimits.UsedStorage -= file.Size;
+        
+        await _usageService.UpdateResourceUsage(Resource.FileStorage, userId, -file.Size);
 
         var fileDeletedEvent = new FileDeletedEvent { Guid = fileId, UserId = file.UserId };
         await _messageSession.Publish(fileDeletedEvent);

@@ -106,6 +106,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(appS
 builder.Services.AddScoped<IQdrantClient, QdrantClient>();
 builder.Services.AddScoped<IOpenAiEmbedder, OpenAiEmbedder>();
 builder.Services.AddScoped<IOpenAiChatClient, OpenAiChatClient>();
+builder.Services.AddScoped<IUsageService, UsageService>();
 
 var app = builder.Build();
 
