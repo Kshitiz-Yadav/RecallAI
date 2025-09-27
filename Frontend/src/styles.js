@@ -1,4 +1,19 @@
 export const styles = {
+    // Page
+    page: {
+        container: "min-h-screen bg-gray-50",
+        content: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8",
+        header: {
+            wrapper: "mb-8",
+            title: "flex items-center space-x-3 mb-2",
+            container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6",
+            content: "flex items-center justify-between",
+            left: "flex-1",
+            subtitle: "text-sm text-gray-600 mt-1",
+            actions: "flex items-center space-x-3"
+        }
+    },
+
     // Button Designs
     buttons: {
         base: "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
@@ -47,7 +62,9 @@ export const styles = {
             error: "text-red-600",
             warning: "text-yellow-500",
             info: "text-blue-500"
-        }
+        },
+
+        placement: "mb-8"
     },
 
     // Input Field Designs
@@ -198,7 +215,7 @@ export const styles = {
         header: {
             base: "bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50",
             container: "flex items-center justify-between h-16",
-            
+
             logo: {
                 button: "p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200",
                 wrapper: "flex items-center space-x-3",
@@ -212,7 +229,7 @@ export const styles = {
                 item: "inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-500",
                 itemActive: "bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-500",
                 itemText: "ml-2 hidden sm:inline",
-                
+
                 // Special styling for logout
                 logout: "inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-red-600 hover:text-red-700 hover:bg-red-50 focus:ring-red-500"
             }
@@ -332,6 +349,78 @@ export const styles = {
 
         // Percentage text
         percentage: "font-mono text-xs text-gray-600"
+    },
+
+    // History Table Component
+    historyTable: {
+        wrapper: "bg-white shadow-sm rounded-lg border border-gray-200",
+
+        header: {
+            container: "px-6 py-4 border-b border-gray-200 bg-gray-50",
+            title: "text-lg font-semibold text-gray-900",
+            subtitle: "text-sm text-gray-500 mt-1"
+        },
+
+        item: {
+            container: "border-b border-gray-100 last:border-b-0",
+
+            summary: {
+                wrapper: "px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors duration-150",
+                content: "flex items-center justify-between",
+                left: "flex-1 min-w-0",
+                right: "flex items-center space-x-3"
+            },
+
+            details: {
+                wrapper: "px-6 py-4 bg-gray-50 border-t border-gray-200",
+                content: "prose max-w-none text-gray-700",
+                label: "text-xs font-medium text-gray-500 uppercase tracking-wider mb-2"
+            },
+
+            timestamp: "text-xs bg-blue-100 text-blue-800 inline-flex items-center px-2.5 py-0.5 rounded-full",
+            question: "text-base font-medium text-gray-900 mt-1",
+
+            expandButton: {
+                base: "inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                icon: "w-5 h-5 text-gray-400 transition-transform duration-200",
+                iconExpanded: "transform rotate-180"
+            }
+        },
+
+        pagination: {
+            wrapper: "px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between",
+
+            info: "text-sm text-gray-700",
+            infoHighlight: "font-medium",
+
+            controls: "flex items-center space-x-2",
+
+            button: {
+                base: "relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                enabled: "bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100",
+                disabled: "text-blue-400 border border-blue-200 cursor-not-allowed",
+                current: "text-blue-700 bg-blue-50 border border-blue-300"
+            },
+
+            pageSize: {
+                wrapper: "flex items-center space-x-2",
+                label: "text-sm text-gray-700",
+                select: "text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            }
+        },
+
+        empty: {
+            wrapper: "px-6 py-12 text-center",
+            icon: "w-12 h-12 mx-auto text-gray-400",
+            title: "text-lg font-medium text-gray-900 mt-4",
+            description: "text-gray-500 mt-2"
+        }
+    },
+
+    dropdown: {
+        select: {
+            base: "block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
+        }
     }
 };
 

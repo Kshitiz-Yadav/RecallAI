@@ -13,15 +13,17 @@ export const chatHistoryReducer = (state, action) => {
             return { ...state, loading: false, chatHistory: action.data, error: null };
         case 'GET_CHAT_HISTORY_FAILURE':
             return { ...state, loading: false, chatHistory: [], error: action.error };
+        case 'CLEAR_ERRORS':
+            return { ...state, error: null };
         default:
             return state;
     }
 }
 
-export const getChatHistory = async (dispatch) => {
+export const getChatHistory = async (dispatch, skip, top) => {
     dispatch({ type: 'LOADING_START' });
     try{
-        const chatHistory = await CLIENT.getChatHistoryAsync();
+        const chatHistory = await CLIENT.getChatHistoryAsync(skip, top);
         dispatch({ type: 'GET_CHAT_HISTORY_SUCCESS', data: chatHistory });
     }
     catch (error) {

@@ -79,12 +79,11 @@ const ResourceUsagePage = () => {
     const stats = calculateOverallStats();
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className={styles.spacing.content}>
-                <div className="py-8">
+        <div className={styles.page.container}>
+            <div className={styles.page.content}>
                     {/* Header */}
-                    <div className="mb-8">
-                        <div className="flex items-center space-x-3 mb-2">
+                    <div className={styles.page.header.wrapper}>
+                        <div className={styles.page.header.title}>
                             <h1 className={styles.typography.headings.h1}>Resource Usage Dashboard</h1>
                         </div>
                         <p className={styles.typography.body.base}>
@@ -92,7 +91,7 @@ const ResourceUsagePage = () => {
                         </p>
                     </div>
 
-                    <div className="mb-8">
+                    <div className={styles.banners.placement}>
                         <ErrorBanner errorMessage={error} onClose={clearErrors}/>
                     </div>
 
@@ -233,7 +232,6 @@ const ResourceUsagePage = () => {
                                 );
                             })}
                     </div>
-                </div>
             </div>
             <LoadingSpinner loading={loading} overlay text="Fetching resource usage..." />
         </div>
