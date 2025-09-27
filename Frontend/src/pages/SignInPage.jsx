@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SignInForm from '../components/Auth/SignInForm';
 
-const SignInPage = () => {
+const SignInPage = ({ setAuthStatus }) => {
     const [searchParams] = useSearchParams();
     const newUser = searchParams.get('mode') == 'signup';
 
@@ -21,7 +21,7 @@ const SignInPage = () => {
                     </div>
                 )}
                 <div className="p-8 bg-gray-50 rounded-xl shadow-xl pt-12 mt-6">
-                    <SignInForm newUser={newUser} setError={setErrorState} />
+                    <SignInForm newUser={newUser} setError={setErrorState} setAuthStatus={setAuthStatus} />
                 </div>
             </div>
         </div>

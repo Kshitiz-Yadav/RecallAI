@@ -2,18 +2,20 @@ import CLIENT from '../api/apiService';
 
 export const initialState = {
     loading: false,
-    usageLimits: null,
-    monthlyUsage: null
+    usageLimits: {},
+    monthlyUsage: {}
 }
 
 export const resourceUsageReducer = (state, action) => {
     switch (action.type) {
         case 'LOADING_START':
-            return { ...state, loading: true, usageLimits: null, monthlyUsage: null, error: null };
+            return { ...state, loading: true, usageLimits: {}, monthlyUsage: {}, error: null };
         case 'GET_USAGE_SUCCESS':
             return { ...state, loading: false, usageLimits: action.limits, monthlyUsage: action.usage, error: null };
         case 'GET_USAGE_FAILURE':
-            return { ...state, loading: false, usageLimits: null, monthlyUsage: null, error: action.error };
+            return { ...state, loading: false, usageLimits: {}, monthlyUsage: {}, error: action.error };
+        case 'CLEAR_ERRORS':
+            return { ...state, error: null };
         default:
             return state;
     }
