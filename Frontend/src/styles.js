@@ -421,6 +421,102 @@ export const styles = {
         select: {
             base: "block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
         }
+    },
+
+    // Not Found Page Designs
+    notFound: {
+        container: "flex flex-col items-center justify-center h-screen text-center",
+        errorCode: "text-9xl font-black text-gray-200 select-none leading-none",
+        title: "text-4xl font-bold text-gray-900 mt-8 mb-4",
+        subtitle: "text-xl text-gray-600 mb-2",
+        description: "text-gray-500 mb-12 max-w-md",
+        actions: "flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-sm",
+        suggestions: {
+            wrapper: "mt-16 w-full max-w-2xl",
+            title: "text-lg font-semibold text-gray-900 mb-6",
+            grid: "grid grid-cols-1 md:grid-cols-3 gap-6",
+            item: {
+                container: "bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200",
+                icon: "w-8 h-8 text-blue-600 mb-4",
+                title: "font-medium text-gray-900 mb-2",
+                description: "text-sm text-gray-500"
+            }
+        }
+    },
+
+    // Modal
+    modals: {
+        overlay: "fixed inset-0 z-50 overflow-y-auto",
+        backdrop: "fixed inset-0 bg-black bg-opacity-50 transition-opacity",
+        container: "flex min-h-screen items-center justify-center p-4",
+
+        base: "relative bg-white rounded-lg shadow-xl w-full",
+
+        sizes: {
+            sm: "max-w-md",
+            md: "max-w-lg",
+            lg: "max-w-2xl",
+            xl: "max-w-4xl",
+            full: "max-w-7xl"
+        },
+
+        header: "flex items-center justify-between p-6 border-b border-gray-200",
+        body: "p-6 max-h-96 overflow-y-auto",
+        footer: "px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end",
+
+        title: "text-lg font-medium text-gray-900",
+        closeButton: "text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded p-1"
+    },
+
+    // Footer
+    footer: {
+        base: "bg-white border-t border-gray-200 mt-auto",
+
+        main: {
+            container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3",
+            grid: "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8"
+        },
+
+        section: {
+            wrapper: "space-y-2 mx-auto",
+            title: "text-xs font-semibold text-gray-900 uppercase tracking-wider",
+            list: "space-y-2"
+        },
+
+        link: {
+            base: "text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded",
+            block: "block",
+            inline: "inline-flex items-center space-x-2"
+        },
+
+        company: {
+            wrapper: "lg:col-span-1 space-y-2 mx-auto",
+            logo: {
+                wrapper: "flex items-center space-x-3",
+                icon: "w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center",
+                iconText: "text-white font-bold text-sm",
+                text: "text-lg font-bold text-gray-900"
+            },
+            description: "text-gray-600 text-xs leading-relaxed max-w-md",
+            social: {
+                wrapper: "flex items-center space-x-4 mx-auto",
+                link: "text-gray-400 hover:text-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 rounded p-1",
+                icon: "w-5 h-5"
+            }
+        },
+
+        bottom: {
+            wrapper: "bg-white",
+            container: "max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 pb-3 pb-0",
+            content: "flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0",
+
+            copyright: "text-xs text-gray-500 mt-0",
+
+            legal: {
+                wrapper: "flex items-center space-x-4 mb-0",
+                link: "text-xs text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+            }
+        }
     }
 };
 

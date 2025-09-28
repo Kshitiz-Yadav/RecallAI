@@ -9,6 +9,7 @@ import RequireAuth from './components/Auth/RequireAuth';
 import ChatHistoryPage from './pages/ChatHistoryPage';
 import ResourceUsagePage from './pages/ResourceUsagePage';
 import { getCookie } from './utils/cookieUtils';
+import Footer from './components/Global/Footer';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,21 +24,22 @@ const App = () => {
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} setAuthStatus={setAuthStatus}/>
+      <Header isLoggedIn={isLoggedIn} setAuthStatus={setAuthStatus} />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/auth" element={<SignInPage setAuthStatus={setAuthStatus}/>} />
-        
+        <Route path="/auth" element={<SignInPage setAuthStatus={setAuthStatus} />} />
+
         <Route element={<RequireAuth />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/history" element={<ChatHistoryPage />} />
           <Route path="/usage" element={<ResourceUsagePage />} />
         </Route>
-        
+
         <Route path="/notfound" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/notfound" replace />} />
       </Routes>
+      <Footer />
     </>
   );
 };
