@@ -1,23 +1,36 @@
-import { useState, useEffect } from 'react';
 
-const ErrorBanner = ({ errorMessage }) => {
-    const [visible, setVisible] = useState(!!errorMessage);
+import { AlertCircle, X } from 'lucide-react';
+import { styles, cn } from '../../styles';
 
-    useEffect(() => {
-        setVisible(!!errorMessage);
-    }, [errorMessage]);
-
-    if (!visible || !errorMessage) return null;
+const ErrorBanner = ({ errorMessage, onClose }) => {
+    if (!errorMessage || errorMessage.length === 0) {
+        return null;
+    }
 
     return (
-        <div className="bg-red-100 text-red-800 border border-red-300 rounded-md px-4 py-3 flex items-center justify-between max-w-md shadow-sm">
-            <span className="text-sm">{errorMessage}</span>
-            <button
-                className="text-xl font-bold text-red-600 hover:text-red-800 ml-4"
-                onClick={() => setVisible(false)}
-            >
-                &times;
-            </button>
+        <div className={cn(styles.banners.base, styles.banners.variants.error)}>
+            <div className="flex items-center">
+                <AlertCircle className={cn("w-5 h-5 flex-shrink-0", styles.banners.iconColors.error)} />
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className={styles.banners.message}>
+                    {errorMessage}
+                </div>
+            </div>
+            {onClose && (
+                <div className="flex items-center ml-3">
+                    <button
+                        onClick={onClose}
+                        className={cn(
+                            styles.banners.closeButton,
+                            "hover:bg-red-100 focus:ring-red-500"
+                        )}
+                        aria-label="Close error banner"
+                    >
+                        <X className={cn("w-4 h-4", styles.banners.iconColors.error)} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,13 +1,14 @@
 import { signInAsync, signUpAsync } from '../api/apiService';
 import { setCookie } from '../utils/cookieUtils'
 
-export async function signIn(email, password, setError, setLoading) {
+export async function signIn(email, password, setError, setLoading, setAuthStatus) {
     try {
         setLoading(true);
         var token = await signInAsync(email, password);
         const expiresInDays = 7;
         setCookie('recall-token', token, expiresInDays);
-        window.location.href = '/dashboard';
+        setAuthStatus(true);
+        window.location.href = '/chat';
     }
     catch (err) {
         console.error('Sign-in failed:', err);

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import STRINGS from '../../constants/strings';
 import * as controller from '../../controllers/authController';
 
-const SignInForm = ({newUser, setError}) => {
+const SignInForm = ({ newUser, setError, setAuthStatus }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,13 +15,13 @@ const SignInForm = ({newUser, setError}) => {
             setError('Please enter both email and password.');
             return;
         }
-        
+
         if (newUser) {
             controller.signUp(email, password, setError, setLoading);
             return;
         }
 
-        controller.signIn(email, password, setError, setLoading);
+        controller.signIn(email, password, setError, setLoading, setAuthStatus);
     };
 
     return (

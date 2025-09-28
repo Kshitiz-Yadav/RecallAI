@@ -1,23 +1,22 @@
 import CLIENT from '../api/apiService';
 
 export const initialState = {
-    file: null,
     error: null,
     loading: false,
     successMessage: null,
-    userFiles: null
+    userFiles: []
 };
 
 export const fileUploadReducer = (state, action) => {
     switch (action.type) {
-        case 'SET_FILE':
-            return { ...state, file: action.payload };
         case 'LOADING_START':
             return { ...state, loading: true };
+        case 'UPLOAD_START':
+            return { ...state, loading: true };
         case 'UPLOAD_SUCCESS':
-            return { ...state, loading: false, file: null, successMessage: action.message, error: null, };
+            return { ...state, loading: false, successMessage: action.message, error: null };
         case 'UPLOAD_FAILURE':
-            return { ...state, loading: false, file: null, successMessage: null, error: action.error };
+            return { ...state, loading: false, successMessage: null, error: action.error };
         case 'GET_ALL_FILES_SUCCESS':
             return { ...state, loading: false, userFiles: action.data, error: null };
         case 'GET_ALL_FILES_FAILURE':
@@ -30,6 +29,10 @@ export const fileUploadReducer = (state, action) => {
             return { ...state, loading: false, error: null };
         case 'GET_FILE_FAILURE':
             return { ...state, loading: false, successMessage: null, error: action.error };
+        case 'CLEAR_ERRORS':
+            return { ...state, error: null };
+        case 'CLEAR_SUCCESS_MESSAGES':
+            return { ...state, successMessage: null };
         default:
             return state;
     }
@@ -44,7 +47,7 @@ export const uploadFile = async (file, dispatch) => {
         dispatch({ type: 'UPLOAD_SUCCESS', message: 'File uploaded successfully!' });
 
         await getFilesSummary(dispatch);
-    } 
+    }
     catch (error) {
         dispatch({ type: 'UPLOAD_FAILURE', error: error.message || 'An unknown error occured while uploading the file.' });
     }
@@ -52,7 +55,7 @@ export const uploadFile = async (file, dispatch) => {
 
 export const getFilesSummary = async (dispatch) => {
     dispatch({ type: 'LOADING_START' });
-    try{
+    try {
         const files = await CLIENT.getAllFilesAsync();
         dispatch({ type: 'GET_ALL_FILES_SUCCESS', data: files });
     }

@@ -1,23 +1,36 @@
-import { useState, useEffect } from 'react';
 
-const SuccessBanner = ({ message }) => {
-    const [visible, setVisible] = useState(!!message);
+import { AlertCircle, X } from 'lucide-react';
+import { styles, cn } from '../../styles';
 
-    useEffect(() => {
-        setVisible(!!message);
-    }, [message]);
-
-    if (!visible || !message) return null;
+const SuccessBanner = ({ message, onClose }) => {
+    if (!message || message.length === 0) {
+        return null;
+    }
 
     return (
-        <div className="bg-green-100 text-green-800 border border-green-300 rounded-md px-4 py-3 flex items-center justify-between max-w-md shadow-sm">
-            <span className="text-sm">{message}</span>
-            <button
-                className="text-xl font-bold text-green-600 hover:text-green-800 ml-4"
-                onClick={() => setVisible(false)}
-            >
-                &times;
-            </button>
+        <div className={cn(styles.banners.base, styles.banners.variants.success)}>
+            <div className="flex items-center">
+                <AlertCircle className={cn("w-5 h-5 flex-shrink-0", styles.banners.iconColors.success)} />
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className={styles.banners.message}>
+                    {message}
+                </div>
+            </div>
+            {onClose && (
+                <div className="flex items-center ml-3">
+                    <button
+                        onClick={onClose}
+                        className={cn(
+                            styles.banners.closeButton,
+                            "hover:bg-green-100 focus:ring-green-500"
+                        )}
+                        aria-label="Close success banner"
+                    >
+                        <X className={cn("w-4 h-4", styles.banners.iconColors.success)} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
