@@ -52,36 +52,36 @@ const ChatHistoryPage = () => {
 
                 {/* Pagination Controls */}
                 <div className="flex justify-between items-center w-full mt-4">
-                        <button
-                            onClick={() => handlePageChange(false)}
-                            disabled={currentPage === 1}
-                            className={cn(
-                                styles.historyTable.pagination.button.base,
-                                currentPage === 1
-                                    ? styles.historyTable.pagination.button.disabled
-                                    : styles.historyTable.pagination.button.enabled
-                            )}
-                        >
-                            <ChevronLeft className="w-4 h-4" />
-                            Previous
-                        </button>
+                    <button
+                        onClick={() => handlePageChange(false)}
+                        disabled={currentPage === 1}
+                        className={cn(
+                            styles.historyTable.pagination.button.base,
+                            currentPage === 1
+                                ? styles.historyTable.pagination.button.disabled
+                                : styles.historyTable.pagination.button.enabled
+                        )}
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                        Previous
+                    </button>
 
-                        <button
-                            onClick={() => handlePageChange(true)}
-                            disabled={chatHistory.length < pageSize}
-                            className={cn(
-                                styles.historyTable.pagination.button.base,
-                                chatHistory.length < pageSize
-                                    ? styles.historyTable.pagination.button.disabled
-                                    : styles.historyTable.pagination.button.enabled
-                            )}
-                        >
-                            Next
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
+                    <button
+                        onClick={() => handlePageChange(true)}
+                        disabled={chatHistory.length < pageSize}
+                        className={cn(
+                            styles.historyTable.pagination.button.base,
+                            chatHistory.length < pageSize
+                                ? styles.historyTable.pagination.button.disabled
+                                : styles.historyTable.pagination.button.enabled
+                        )}
+                    >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
                 </div>
             </div>
-            <LoadingSpinner loading={loading} overlay text="Fetching chat history..." />
+            <LoadingSpinner loading={loading} text="Fetching chat history..." />
         </div>
     );
 };

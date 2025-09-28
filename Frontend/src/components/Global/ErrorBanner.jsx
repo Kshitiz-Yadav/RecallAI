@@ -1,10 +1,9 @@
 
-import React from 'react';
 import { AlertCircle, X } from 'lucide-react';
 import { styles, cn } from '../../styles';
 
 const ErrorBanner = ({ errorMessage, onClose }) => {
-    if (!errorMessage) {
+    if (!errorMessage || errorMessage.length === 0) {
         return null;
     }
 

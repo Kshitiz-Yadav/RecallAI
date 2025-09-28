@@ -1,24 +1,97 @@
-import { useState } from 'react';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
-import FileViewModal from './FileViewModal';
+import ConfirmationModal from '../Global/ConfirmationModal';
 import { deleteFile, getFile } from '../../controllers/fileManagementController';
+import { useState, useMemo } from 'react';
+import { ChevronDown, ChevronUp, Eye, Trash2, File, ChevronLeft, ChevronRight } from 'lucide-react';
+import { styles, cn } from '../../styles';
+import Modal from '../Global/Modal';
 
-const FilesTable = ({ userFiles, dispatch }) => {
+const FilesTable = ({ files = [], dispatch }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
+    const [sortField, setSortField] = useState('uploadDate');
+    const [sortDirection, setSortDirection] = useState('desc');
     const [selectedFile, setSelectedFile] = useState(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showFileViewModal, setShowFileViewModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [fileContent, setFileContent] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const handleDeleteClick = (file) => {
-        setSelectedFile(file);
-        setShowDeleteModal(true);
+    // Status mapping
+    const statusMap = {
+        0: { label: 'Pending', variant: 'warning' },
+        1: { label: 'Processing', variant: 'info' },
+        2: { label: 'Ready', variant: 'success' }
     };
 
-    const handleFileClick = async (file) => {
+    // Format file size
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    // Format date
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
+
+    // Handle sorting
+    const handleSort = (field) => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection(field === 'uploadDate' ? 'desc' : 'asc');
+        }
+        setCurrentPage(1);
+    };
+
+    // Sort and paginate data
+    const sortedFiles = useMemo(() => {
+        return [...files].sort((a, b) => {
+            let aVal = a[sortField];
+            let bVal = b[sortField];
+
+            if (sortField === 'uploadDate') {
+                aVal = new Date(aVal);
+                bVal = new Date(bVal);
+            } else if (sortField === 'size') {
+                aVal = Number(aVal);
+                bVal = Number(bVal);
+            } else if (sortField === 'name') {
+                aVal = aVal.toLowerCase();
+                bVal = bVal.toLowerCase();
+            }
+
+            if (sortDirection === 'asc') {
+                return aVal > bVal ? 1 : -1;
+            } else {
+                return aVal < bVal ? 1 : -1;
+            }
+        });
+    }, [files, sortField, sortDirection]);
+
+    const totalPages = Math.ceil(sortedFiles.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const paginatedFiles = sortedFiles.slice(startIndex, startIndex + pageSize);
+
+    // Handle view file
+    const handleViewFile = async (file) => {
         const fetchedFile = await getFile(file.guid, dispatch);
         setSelectedFile(file);
         setFileContent(fetchedFile.rawContent);
-        setShowFileViewModal(true);
+        setShowModal(true);
+    };
+
+    // Handle delete file
+    const handleDeleteFile = (file) => {
+        setSelectedFile(file);
+        setShowDeleteModal(true);
     };
 
     const handleDeleteConfirmation = () => {
@@ -26,99 +99,247 @@ const FilesTable = ({ userFiles, dispatch }) => {
         setShowDeleteModal(false);
     }
 
-    const formatFileSize = (bytes) => {
-        if (bytes === 0) return '0 Bytes';
-        const kb = 1024;
-        const mb = kb * 1024;
-
-        if (bytes < mb) {
-            return `${(bytes / kb).toFixed(2)} KB`;
-        } else {
-            return `${(bytes / mb).toFixed(2)} MB`;
-        }
-    }
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const year = date.getUTCFullYear();
-        return `${day}-${month}-${year}`;
-    }
+    // Render sort icon
+    const renderSortIcon = (field) => {
+        if (sortField !== field) return null;
+        return sortDirection === 'asc' ?
+            <ChevronUp className="w-4 h-4 ml-1" /> :
+            <ChevronDown className="w-4 h-4 ml-1" />;
+    };
 
     return (
-        <div className="overflow-x-auto mt-6">
-            <table className="min-w-full bg-white rounded shadow">
-                <thead>
-                    <tr className="bg-gray-100 text-left text-sm text-gray-700 uppercase">
-                        <th className="px-4 py-2">#</th>
-                        <th className="px-4 py-2">Filename</th>
-                        <th className="px-4 py-2">Upload Date</th>
-                        <th className="px-4 py-2">Size</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {userFiles && userFiles.length > 0 ? (
-                        userFiles.map((file, index) => (
-                            <tr key={index} className="border-t text-sm">
-                                <td className="px-4 py-2">{index + 1}</td>
-                                <td
-                                    className="px-4 py-2 text-blue-600 cursor-pointer hover:underline"
-                                    onClick={() => handleFileClick(file)}
-                                >
-                                    {file.name}
+        <div className={styles.cards.base}>
+            <div className={styles.tables.wrapper}>
+                <table className={cn(styles.tables.base, "table-fixed")}>
+                    <thead className={styles.tables.header}>
+                        <tr>
+                            <th className={cn(styles.tables.headerCell, "w-16")}>
+                                #
+                            </th>
+                            <th
+                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-80")}
+                                onClick={() => handleSort('name')}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span>Filename</span>
+                                    <span className="flex-shrink-0 ml-2">
+                                        {renderSortIcon('name')}
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-40")}
+                                onClick={() => handleSort('uploadDate')}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span>Upload Date</span>
+                                    <span className="flex-shrink-0 ml-2">
+                                        {renderSortIcon('uploadDate')}
+                                    </span>
+                                </div>
+                            </th>
+                            <th
+                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-24")}
+                                onClick={() => handleSort('size')}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span>Size</span>
+                                    <span className="flex-shrink-0 ml-2">
+                                        {renderSortIcon('size')}
+                                    </span>
+                                </div>
+                            </th>
+                            <th className={cn(styles.tables.headerCell, "w-28")}>
+                                Status
+                            </th>
+                            <th className={cn(styles.tables.headerCell, "w-24")}>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className={styles.tables.body}>
+                        {paginatedFiles.map((file, index) => (
+                            <tr key={file.guid} className={styles.tables.row}>
+                                <td className={cn(styles.tables.cell, "w-16")}>
+                                    {startIndex + index + 1}
                                 </td>
-                                <td className="px-4 py-2">{formatDate(file.uploadDate)}</td>
-                                <td className="px-4 py-2">{formatFileSize(file.size)}</td>
-                                <td className="px-4 py-2">
-                                    <div className="relative group">
-                                        <span className="cursor-help">
-                                            {file.status === 0 ? 'Uploaded' : 
-                                             file.status === 1 ? 'Processing' : 
-                                             file.status === 2 ? 'Ready' : 'Unknown'}
+                                <td className={cn(styles.tables.cell, "w-80")}>
+                                    <div className="flex items-center">
+                                        <File className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
+                                        <span className="font-medium truncate" title={file.name}>
+                                            {file.name}
                                         </span>
-                                        <div className="hidden group-hover:block absolute z-10 p-2 bg-gray-800 text-white text-xs rounded shadow-lg bottom-full mb-1 left-0 whitespace-nowrap">
-                                            {file.status < 2 ? "File will be ready to recall soon" : "File is ready to be recalled"}
-                                            <div className="absolute -bottom-1 left-4 w-2 h-2 bg-gray-800 rotate-45"></div>
-                                        </div>
                                     </div>
                                 </td>
-                                <td className="px-4 py-2">
-                                    <button
-                                        onClick={() => handleDeleteClick(file)}
-                                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                    >
-                                        Delete
-                                    </button>
+                                <td className={cn(styles.tables.cell, "w-40")}>
+                                    {formatDate(file.uploadDate)}
+                                </td>
+                                <td className={cn(styles.tables.cell, "w-24")}>
+                                    {formatFileSize(file.size)}
+                                </td>
+                                <td className={cn(styles.tables.cell, "w-28")}>
+                                    <span className={cn(
+                                        styles.badges.base,
+                                        styles.badges.variants[statusMap[file.status].variant]
+                                    )}>
+                                        {statusMap[file.status].label}
+                                    </span>
+                                </td>
+                                <td className={cn(styles.tables.cell, "w-24")}>
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            onClick={() => handleViewFile(file)}
+                                            className={cn(
+                                                styles.buttons.base,
+                                                styles.buttons.variants.ghost,
+                                                styles.buttons.sizes.sm,
+                                                styles.buttons.iconOnly
+                                            )}
+                                            title="View file"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteFile(file)}
+                                            className={cn(
+                                                styles.buttons.base,
+                                                styles.buttons.variants.ghost,
+                                                styles.buttons.sizes.sm,
+                                                styles.buttons.iconOnly,
+                                                "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                            )}
+                                            title="Delete file"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="5" className="text-center py-4 text-gray-500">
-                                No files found.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Pagination */}
+            <div className={styles.historyTable.pagination.wrapper}>
+                <div className="flex items-center justify-between w-full">
+                    {/* Page info */}
+                    <div className={styles.historyTable.pagination.info}>
+                        Showing <span className={styles.historyTable.pagination.infoHighlight}>
+                            {startIndex + 1}
+                        </span> to <span className={styles.historyTable.pagination.infoHighlight}>
+                            {Math.min(startIndex + pageSize, sortedFiles.length)}
+                        </span> of <span className={styles.historyTable.pagination.infoHighlight}>
+                            {sortedFiles.length}
+                        </span> files
+                    </div>
+
+                    {/* Page size selector */}
+                    <div className={styles.historyTable.pagination.pageSize.wrapper}>
+                        <span className={styles.historyTable.pagination.pageSize.label}>
+                            Show:
+                        </span>
+                        <select
+                            value={pageSize}
+                            onChange={(e) => {
+                                setPageSize(Number(e.target.value));
+                                setCurrentPage(1);
+                            }}
+                            className={cn(
+                                styles.historyTable.pagination.pageSize.select,
+                                "ml-2"
+                            )}
+                        >
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+
+                    {/* Pagination controls */}
+                    <div className={styles.historyTable.pagination.controls}>
+                        <button
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={cn(
+                                styles.historyTable.pagination.button.base,
+                                currentPage === 1
+                                    ? styles.historyTable.pagination.button.disabled
+                                    : styles.historyTable.pagination.button.enabled
+                            )}
+                        >
+                            <ChevronLeft className="w-4 h-4 mr-1" />
+                            Previous
+                        </button>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let pageNum;
+                            if (totalPages <= 5) {
+                                pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                                pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                                pageNum = totalPages - 4 + i;
+                            } else {
+                                pageNum = currentPage - 2 + i;
+                            }
+
+                            return (
+                                <button
+                                    key={pageNum}
+                                    onClick={() => setCurrentPage(pageNum)}
+                                    className={cn(
+                                        styles.historyTable.pagination.button.base,
+                                        currentPage === pageNum
+                                            ? styles.historyTable.pagination.button.current
+                                            : styles.historyTable.pagination.button.enabled
+                                    )}
+                                >
+                                    {pageNum}
+                                </button>
+                            );
+                        })}
+
+                        <button
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages || totalPages === 0}
+                            className={cn(
+                                styles.historyTable.pagination.button.base,
+                                currentPage === totalPages || totalPages === 0
+                                    ? styles.historyTable.pagination.button.disabled
+                                    : styles.historyTable.pagination.button.enabled
+                            )}
+                        >
+                            Next
+                            <ChevronRight className="w-4 h-4 ml-1" />
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {showDeleteModal && (
-                <DeleteConfirmationModal
-                    file={selectedFile}
+                <ConfirmationModal
+                    itemName={selectedFile ? selectedFile.name : ''}
+                    title='Delete File?'
+                    message='Are you sure you want to delete this file? This action cannot be undone.'
+                    isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={() => handleDeleteConfirmation()}
                 />
             )}
 
-            {showFileViewModal && (
-                <FileViewModal
-                    file={selectedFile}
-                    fileContent={fileContent}
-                    onClose={() => setShowFileViewModal(false)}
-                />
+            {/* View File Modal */}
+            {showModal && selectedFile && (
+                <Modal title={`File Content - ${selectedFile.name}`} isOpen={showModal} onClose={() => setShowModal(false)}>
+                    <div className="space-y-4">
+                        <div>
+                            <p className="text-gray-900 mt-1 text-justify">{fileContent}</p>
+                        </div>
+                    </div>
+                </Modal>
+
             )}
         </div>
     );
