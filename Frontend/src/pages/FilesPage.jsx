@@ -3,9 +3,9 @@ import { initialState, fileUploadReducer, uploadFile, getFilesSummary } from '..
 import ErrorBanner from '../components/Global/ErrorBanner';
 import SuccessBanner from '../components/Global/SuccessBanner';
 import LoadingSpinner from '../components/Global/LoadingSpinner';
-import FilesTable from '../components/Dashboard/FilesTable';
+import FilesTable from '../components/Files/FilesTable';
 
-const DashboardPage = () => {
+const FilesPage = () => {
     const [state, dispatch] = useReducer(fileUploadReducer, initialState);
     const { file, loading, error, successMessage, userFiles } = state;
 
@@ -38,7 +38,7 @@ const DashboardPage = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-4">Files</h1>
             <ErrorBanner errorMessage={error} />
             <SuccessBanner message={successMessage} />
             <LoadingSpinner loading={loading} />
@@ -59,4 +59,4 @@ const DashboardPage = () => {
     );
 }
 
-export default DashboardPage;
+export default FilesPage;

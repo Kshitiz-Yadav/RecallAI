@@ -8,7 +8,7 @@ export async function signIn(email, password, setError, setLoading, setAuthStatu
         const expiresInDays = 7;
         setCookie('recall-token', token, expiresInDays);
         setAuthStatus(true);
-        window.location.href = '/dashboard';
+        window.location.href = '/files';
     }
     catch (err) {
         console.error('Sign-in failed:', err);

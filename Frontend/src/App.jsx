@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import SignInPage from './pages/SignInPage';
 import Header from './components/Header/Header';
-import DashboardPage from './pages/DashboardPage';
+import FilesPage from './pages/FilesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RequireAuth from './components/Auth/RequireAuth';
 import ChatHistoryPage from './pages/ChatHistoryPage';
@@ -31,7 +31,7 @@ const App = () => {
         <Route path="/auth" element={<SignInPage setAuthStatus={setAuthStatus} />} />
 
         <Route element={<RequireAuth />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/files" element={<FilesPage />} />
           <Route path="/history" element={<ChatHistoryPage />} />
           <Route path="/usage" element={<ResourceUsagePage />} />
         </Route>

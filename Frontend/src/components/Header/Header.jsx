@@ -89,20 +89,20 @@ const Header = ({ isLoggedIn, setAuthStatus }) => {
                     <span className="ml-2 hidden sm:inline">Home</span>
                 </Link>
                 <Link
-                    to="/dashboard"
-                    className={isActive('/dashboard') ? activeNavItemClasses : navItemClasses}
-                    onClick={() => handleNavigation('/dashboard')}
-                >
-                    <FileText size={16} />
-                    <span className="ml-2 hidden sm:inline">Dashboard</span>
-                </Link>
-                <Link
                     to="/chat"
                     className={isActive('/chat') ? activeNavItemClasses : navItemClasses}
                     onClick={() => handleNavigation('/chat')}
                 >
                     <MessageCircle size={16} />
                     <span className="ml-2 hidden sm:inline">Chat</span>
+                </Link>
+                <Link
+                    to="/files"
+                    className={isActive('/files') ? activeNavItemClasses : navItemClasses}
+                    onClick={() => handleNavigation('/files')}
+                >
+                    <FileText size={16} />
+                    <span className="ml-2 hidden sm:inline">Files</span>
                 </Link>
                 <Link
                     to="/history"
