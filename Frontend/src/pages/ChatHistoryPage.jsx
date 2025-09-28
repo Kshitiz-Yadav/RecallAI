@@ -4,7 +4,7 @@ import { styles, cn } from "../styles";
 import HistoryTable from "../components/History/HistoryTable";
 import ErrorBanner from "../components/Global/ErrorBanner";
 import LoadingSpinner from "../components/Global/LoadingSpinner";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 
 const ChatHistoryPage = () => {
     const [state, dispatch] = useReducer(chatHistoryReducer, initialState);
@@ -32,6 +32,7 @@ const ChatHistoryPage = () => {
                 {/* Header */}
                 <div className={styles.page.header.wrapper}>
                     <div className={styles.page.header.title}>
+                        <Clock className="w-8 h-8 text-blue-600" />
                         <h1 className={styles.typography.headings.h1}>Chat History</h1>
                     </div>
                     <p className={styles.typography.body.base}>

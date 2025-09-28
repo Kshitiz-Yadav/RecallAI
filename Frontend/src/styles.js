@@ -378,6 +378,7 @@ export const styles = {
             },
 
             timestamp: "text-xs bg-blue-100 text-blue-800 inline-flex items-center px-2.5 py-0.5 rounded-full",
+            model: "text-xs bg-green-100 text-green-800 inline-flex items-center px-2.5 py-0.5 rounded-full mx-2",
             question: "text-base font-medium text-gray-900 mt-1",
 
             expandButton: {

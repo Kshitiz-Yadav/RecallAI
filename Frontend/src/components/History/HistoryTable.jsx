@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { styles, cn } from '../../styles';
 import { ChevronDown, MessageSquare } from 'lucide-react';
+import { ModelLabels } from '../../enums/models';
 
 const HistoryTable = ({ data = [], className = "" }) => {
     const [expandedItems, setExpandedItems] = useState(new Set());
@@ -124,11 +125,14 @@ const HistoryTable = ({ data = [], className = "" }) => {
                             >
                                 <div className={styles.historyTable.item.summary.content}>
                                     <div className={styles.historyTable.item.summary.left}>
+                                        <div className={styles.historyTable.item.question}>
+                                            {item.question}
+                                        </div>
                                         <div className={styles.historyTable.item.timestamp}>
                                             {formatTimestamp(item.timeStamp)}
                                         </div>
-                                        <div className={styles.historyTable.item.question}>
-                                            {item.question}
+                                        <div className={styles.historyTable.item.model}>
+                                            {ModelLabels[item.chatModel]}
                                         </div>
                                     </div>
                                     <div className={styles.historyTable.item.summary.right}>

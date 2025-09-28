@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import { resourceUsageReducer, initialState, getResourceUsage } from "../controllers/resourceUsageController";
 import ErrorBanner from "../components/Global/ErrorBanner";
 import LoadingSpinner from "../components/Global/LoadingSpinner";
-import { BarChart3, AlertTriangle, CheckCircle } from 'lucide-react';
+import { BarChart3, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 import { styles, cn } from '../styles';
 import UsageBar from "../components/Usage/UsageBar";
 
@@ -84,6 +84,7 @@ const ResourceUsagePage = () => {
                 {/* Header */}
                 <div className={styles.page.header.wrapper}>
                     <div className={styles.page.header.title}>
+                        <TrendingUp className="w-8 h-8 text-blue-600" />
                         <h1 className={styles.typography.headings.h1}>Resource Usage Dashboard</h1>
                     </div>
                     <p className={styles.typography.body.base}>

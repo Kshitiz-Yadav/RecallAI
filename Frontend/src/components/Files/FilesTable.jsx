@@ -1,13 +1,13 @@
 import ConfirmationModal from '../Global/ConfirmationModal';
 import { deleteFile, getFile } from '../../controllers/fileManagementController';
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, Eye, Trash2, File, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, Trash2, File, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { styles, cn } from '../../styles';
 import Modal from '../Global/Modal';
 
 const FilesTable = ({ files = [], dispatch }) => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [sortField, setSortField] = useState('uploadDate');
     const [sortDirection, setSortDirection] = useState('desc');
     const [selectedFile, setSelectedFile] = useState(null);
@@ -106,6 +106,20 @@ const FilesTable = ({ files = [], dispatch }) => {
             <ChevronUp className="w-4 h-4 ml-1" /> :
             <ChevronDown className="w-4 h-4 ml-1" />;
     };
+
+    if (!files || files.length === 0) {
+        return (
+            <div className={cn(styles.historyTable.wrapper)}>
+                <div className={styles.historyTable.empty.wrapper}>
+                    <MessageSquare className={styles.historyTable.empty.icon} />
+                    <h3 className={styles.historyTable.empty.title}>No uploaded files</h3>
+                    <p className={styles.historyTable.empty.description}>
+                        Your files will appear here once you upload some.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.cards.base}>

@@ -70,20 +70,20 @@ const FilesPage = () => {
                 {/* Header */}
                 <div className={styles.page.header.wrapper}>
                     <div className="flex items-center justify-between">
-                        <div className={styles.page.header.title}>
-                            <File className="w-8 h-8 text-blue-600" />
-                            <div>
+                        <div>
+                            <div className={styles.page.header.title}>
+                                <File className="w-8 h-8 text-blue-600" />
                                 <h1 className={styles.typography.headings.h1}>Files</h1>
-                                <p className={styles.page.header.subtitle}>
-                                    Manage and upload your files
-                                </p>
                             </div>
+                            <p className={styles.typography.body.base}>
+                                Manage and upload your files
+                            </p>
                         </div>
                         <button
                             onClick={handleRefresh}
                             className={cn(
                                 styles.buttons.base,
-                                styles.buttons.variants.outline,
+                                styles.buttons.variants.success,
                                 styles.buttons.sizes.md
                             )}
                         >
