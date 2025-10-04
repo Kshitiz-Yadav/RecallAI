@@ -12,4 +12,6 @@ public class AppSettings
     public required string QdrantUrl { get; set; }
     public required string SystemPrompt { get; set; }
     public required Dictionary<Resource, ResourceLimits> ResourceLimits { get; set; }
+    public required string SmtpEmail { get; set; }
+    public required string SmtpPassword { get; set; }
 }
