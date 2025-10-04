@@ -10,6 +10,7 @@ import ChatHistoryPage from './pages/ChatHistoryPage';
 import ResourceUsagePage from './pages/ResourceUsagePage';
 import { getCookie } from './utils/cookieUtils';
 import Footer from './components/Global/Footer';
+import ChatPage from './pages/ChatPage';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/auth" element={<SignInPage setAuthStatus={setAuthStatus} />} />
 
         <Route element={<RequireAuth />}>
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/files" element={<FilesPage />} />
           <Route path="/history" element={<ChatHistoryPage />} />
           <Route path="/usage" element={<ResourceUsagePage />} />

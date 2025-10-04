@@ -101,6 +101,18 @@ const CLIENT = {
             const errorMessage = error?.response?.data || error.message || error;
             throw new Error(errorMessage);
         }
+    },
+
+    // Chat API calls
+    async askQuestionAsync(requestData) {
+        try {
+            const response = await api.post('/Chat', requestData);
+            return response.data;
+        }
+        catch (error) {
+            const errorMessage = error?.response?.data || error.message || error;
+            throw new Error(errorMessage);
+        }
     }
 }
 
