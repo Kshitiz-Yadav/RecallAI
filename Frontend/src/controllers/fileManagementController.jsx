@@ -20,7 +20,7 @@ export const fileUploadReducer = (state, action) => {
         case 'GET_ALL_FILES_SUCCESS':
             return { ...state, loading: false, userFiles: action.data, error: null };
         case 'GET_ALL_FILES_FAILURE':
-            return { ...state, loading: false, userFiles: null, successMessage: null, error: action.error };
+            return { ...state, loading: false, userFiles: [], successMessage: null, error: action.error };
         case 'DELETE_FILE_SUCCESS':
             return { ...state, loading: false, successMessage: action.message, error: null };
         case 'DELETE_FILE_FAILURE':

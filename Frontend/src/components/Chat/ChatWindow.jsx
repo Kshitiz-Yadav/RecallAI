@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare, Info } from 'lucide-react';
 import { styles, cn } from '../../styles';
 
-const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
+const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isFetchingAnswer }) => {
     const [inputValue, setInputValue] = useState('');
     const [showHistoryBanner, setShowHistoryBanner] = useState(false);
     const messagesEndRef = useRef(null);
@@ -17,7 +17,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isLoading]);
+    }, [messages, isFetchingAnswer]);
 
     useEffect(() => {
         const container = messagesContainerRef.current;
@@ -26,7 +26,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
         const handleScroll = () => {
             if (container.scrollTop === 0 && messages.length >= oldChatLimit) {
                 setShowHistoryBanner(true);
-            } 
+            }
             else {
                 setShowHistoryBanner(false);
             }
@@ -37,7 +37,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
     }, [messages.length]);
 
     const handleSend = () => {
-        if (inputValue.trim() && !isLoading) {
+        if (inputValue.trim() && !isFetchingAnswer) {
             onSendMessage(inputValue);
             setInputValue('');
             inputRef.current?.focus();
@@ -58,7 +58,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
                 ref={messagesContainerRef}
                 className={cn(
                     "flex-1 p-4",
-                    messages.length > 0 || isLoading ? "overflow-y-auto space-y-4" : "overflow-hidden"
+                    messages.length > 0 || isFetchingAnswer ? "overflow-y-auto space-y-4" : "overflow-hidden"
                 )}
             >
                 {showHistoryBanner && (
@@ -69,12 +69,12 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
                         </p>
                     </div>
                 )}
-                {messages.length === 0 && !isLoading ? (
+                {messages.length === 0 && !isFetchingAnswer ? (
                     <div className="flex items-center justify-center h-full">
                         <div className="text-center">
                             <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No messages in current session</h3>
-                            <p className="text-gray-500">Start a conversation by typing a message below</p>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">Ask questions by typing below</h3>
+                            <p className="text-gray-500">Older messages can be found in the history section</p>
                         </div>
                     </div>
                 ) : (
@@ -105,7 +105,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
                                 </div>
                             </div>
                         ))}
-                        {isLoading && (
+                        {isFetchingAnswer && (
                             <div className="flex justify-start">
                                 <div className="bg-gray-100 rounded-lg px-4 py-3 shadow-sm">
                                     <div className="flex items-center space-x-2">
@@ -139,7 +139,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isLoading }) => {
                     />
                     <button
                         onClick={handleSend}
-                        disabled={!inputValue.trim() || isLoading}
+                        disabled={!inputValue.trim() || isFetchingAnswer}
                         className={cn(
                             styles.buttons.base,
                             styles.buttons.variants.primary,

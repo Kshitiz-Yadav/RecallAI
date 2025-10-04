@@ -1,20 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import { Settings, MessageSquareText } from 'lucide-react';
 import ChatWindow from '../components/Chat/ChatWindow';
 import CustomizePanel from '../components/Chat/CustomizePanel';
 import { styles, cn } from '../styles';
+import { chatReducer, initialState, getFilesSummary, askQuestion } from '../controllers/chatController';
+import LoadingSpinner from '../components/Global/LoadingSpinner';
+import ErrorBanner from '../components/Global/ErrorBanner';
+import { Models } from '../enums/models';
 
 const ChatPage = () => {
+    const [state, dispatch] = useReducer(chatReducer, initialState);
+    const { loading, error, files, isFetchingAnswer, messages } = state;
+
     const [isPanelOpen, setIsPanelOpen] = useState(true);
-    const [messages, setMessages] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [settings, setSettings] = useState({
         selectedFiles: [],
         topK: 5,
-        chatModel: 'gpt-4',
+        chatModel: Models.Gpt4oMini,
         maxWords: 500,
     });
-    const oldChatLimit = 20; 
+    const oldChatLimit = 20;
+
+    useEffect(() => {
+        getFilesSummary(dispatch);
+    }, []);
+
+    const clearErrors = () => {
+        dispatch({ type: 'CLEAR_ERRORS' });
+    }
 
     const handleSendMessage = async (content) => {
         const userMessage = {
@@ -24,20 +37,8 @@ const ChatPage = () => {
             timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
         };
 
-        setMessages(prev => [...prev.slice(-(oldChatLimit - 1)), userMessage]);
-        setIsLoading(true);
-
-        // Simulate AI response
-        setTimeout(() => {
-            const aiMessage = {
-                id: Date.now() + 1,
-                role: 'assistant',
-                content: `This is a simulated response to: "${content}". In a real application, this would query your RAG system using the selected files (${settings.selectedFiles.length} files), top K of ${settings.topK}, using ${settings.chatModel} model with max ${settings.maxWords} words.`,
-                timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            };
-            setMessages(prev => [...prev.slice(-(oldChatLimit - 1)), aiMessage]);
-            setIsLoading(false);
-        }, 150);
+        dispatch({ type: 'ADD_USER_MESSAGE', data: userMessage });
+        await askQuestion(content, settings, dispatch);
     };
 
     const handleSettingsChange = (newSettings) => {
@@ -68,9 +69,14 @@ const ChatPage = () => {
                             )}
                         >
                             <Settings className="w-5 h-5 mr-2" />
-                            Settings
+                            Customize
                         </button>
                     </div>
+                </div>
+
+                {/* Error Banner */}
+                <div className={styles.banners.placement}>
+                    <ErrorBanner errorMessage={error} onClose={clearErrors} />
                 </div>
 
                 {/* Main Content */}
@@ -78,7 +84,7 @@ const ChatPage = () => {
                     <ChatWindow
                         messages={messages}
                         onSendMessage={handleSendMessage}
-                        isLoading={isLoading}
+                        isFetchingAnswer={isFetchingAnswer}
                         oldChatLimit={oldChatLimit}
                     />
                     <CustomizePanel
@@ -86,8 +92,11 @@ const ChatPage = () => {
                         onClose={() => setIsPanelOpen(false)}
                         settings={settings}
                         onSettingsChange={handleSettingsChange}
+                        files={files}
                     />
                 </div>
+
+                <LoadingSpinner loading={loading} />
             </div>
         </div>
     );
