@@ -3,17 +3,20 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Backend.Data.Migrations
+namespace API.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251004134654_UserAccountVerification")]
+    partial class UserAccountVerification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,9 +144,8 @@ namespace Backend.Data.Migrations
                     b.Property<DateTime>("Expiry")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Otp")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Otp")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

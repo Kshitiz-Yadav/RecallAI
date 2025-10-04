@@ -5,10 +5,13 @@ using System.Text;
 using API.Data;
 using API.Data.Domain;
 using API.Dto.Auth;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static System.Net.WebRequestMethods;
 
 namespace API.Auth;
 
@@ -20,13 +23,15 @@ public class AuthController : Controller
     private readonly DatabaseContext _dbContext;
     private readonly PasswordHasher<object> _passwordHasher;
     private readonly ILogger<AuthController> _logger;
+    private readonly IEmailService _emailService;
 
-    public AuthController(AppSettings appSettings, DatabaseContext dbContext, ILogger<AuthController> logger)
+    public AuthController(AppSettings appSettings, DatabaseContext dbContext, ILogger<AuthController> logger, IEmailService emailService)
     {
         _passwordHasher = new PasswordHasher<object>();
         _appSettings = appSettings;
         _dbContext = dbContext;
         _logger = logger;
+        _emailService = emailService;
     }
 
     [HttpPost("register")]
@@ -45,22 +50,71 @@ public class AuthController : Controller
         await _dbContext.AddAsync<User>(new User
         {
             Email = username,
-            PasswordHash = HashPassword(password)
+            PasswordHash = HashPassword(password),
+            IsVerified = false
         });
         await _dbContext.SaveChangesAsync();
 
-        var storedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
-        if (storedUser == null)
+        var otp = await _emailService.SendOtpEmail(username);
+        await _dbContext.AddAsync<UserAccountVerification>(new UserAccountVerification
         {
-            _logger.LogError("Could not create user successfully.");
-            return StatusCode((int)HttpStatusCode.InternalServerError, "Could not create user successfully..");
-        }
-
+            Email = username,
+            Otp = otp,
+            Expiry = DateTime.UtcNow.AddMinutes(5)
+        });
         await _dbContext.SaveChangesAsync();
 
         _logger.LogInformation("User {userName} created successfully", username);
         return Created();
     }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp([FromBody] UserCredentials credentials)
+    {
+        _logger.LogInformation("Verifying OTP for {userName}", credentials.Email);
+        var username = credentials.Email.ToLower();
+
+        var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username && o.Otp == credentials.Otp);
+        if (otpEntry == null)
+        {
+            return new UnauthorizedObjectResult("Invalid OTP Provided");
+        }
+
+        if(otpEntry.Expiry < DateTime.UtcNow)
+        {
+            return BadRequest("This OTP has Expired");
+        }
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
+        if (user != null)
+        {
+            user.IsVerified = true;
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return Ok("OTP verified successfully");
+    }
+
+    [HttpPost("resend-otp")]
+    public async Task<IActionResult> ResendOtp([FromBody] UserCredentials credentials)
+    {
+        _logger.LogInformation("Resending OTP for {userName}", credentials.Email);
+        var username = credentials.Email.ToLower();
+
+        var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username);
+        if (otpEntry == null)
+        {
+            return new UnauthorizedObjectResult("This user does not exist");
+        }
+
+        var otp = await _emailService.SendOtpEmail(username);
+        otpEntry.Otp = otp;
+        otpEntry.Expiry = DateTime.UtcNow.AddMinutes(5);
+        await _dbContext.SaveChangesAsync();
+        return Ok("OTP resent successfully");
+    }
+
+
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserCredentials credentials)
@@ -72,6 +126,11 @@ public class AuthController : Controller
         if(user == null)
         {
             return BadRequest("User does not exist.");
+        }
+
+        if (!user.IsVerified)
+        {
+            return new UnauthorizedObjectResult("Email verification pending");
         }
 
         if(!VerifyPassword(user.PasswordHash, password))

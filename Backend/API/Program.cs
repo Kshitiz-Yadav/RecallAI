@@ -107,6 +107,7 @@ builder.Services.AddScoped<IQdrantClient, QdrantClient>();
 builder.Services.AddScoped<IOpenAiEmbedder, OpenAiEmbedder>();
 builder.Services.AddScoped<IOpenAiChatClient, OpenAiChatClient>();
 builder.Services.AddScoped<IUsageService, UsageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
