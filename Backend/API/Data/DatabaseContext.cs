@@ -15,6 +15,8 @@ public class DatabaseContext : DbContext
 
     public DbSet<ChatHistory> ChatHistory { get; set; }
 
+    public DbSet<UserAccountVerification> UserAccountVerification { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Usage>().HasKey(u => new { u.UserId, u.Resource, u.Month });
