@@ -22,11 +22,11 @@ export const chatHistoryReducer = (state, action) => {
 
 export const getChatHistory = async (dispatch, skip, top) => {
     dispatch({ type: 'LOADING_START' });
-    try{
+    try {
         const chatHistory = await CLIENT.getChatHistoryAsync(skip, top);
         dispatch({ type: 'GET_CHAT_HISTORY_SUCCESS', data: chatHistory });
     }
     catch (error) {
-        dispatch({ type: 'GET_CHAT_HISTORY_FAILURE', error: error.message || 'An unknown error occurred while fetching chat history.' });
+        dispatch({ type: 'GET_CHAT_HISTORY_FAILURE', error: error.message });
     }
 }

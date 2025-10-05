@@ -7,11 +7,10 @@ using API.Data.Domain;
 using API.Dto.Auth;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using static System.Net.WebRequestMethods;
+using static API.ApiResponseResolver;
 
 namespace API.Auth;
 
@@ -44,7 +43,7 @@ public class AuthController : Controller
         if(user != null)
         {
             _logger.LogError("Error while registering user {userName}: Username already exists.", username);
-            return BadRequest("Username already exists.");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "Username already exists.");
         }
 
         await _dbContext.AddAsync<User>(new User
@@ -65,7 +64,7 @@ public class AuthController : Controller
         await _dbContext.SaveChangesAsync();
 
         _logger.LogInformation("User {userName} created successfully", username);
-        return Created();
+        return ProcessApiResponse(HttpStatusCode.Created);
     }
 
     [HttpPost("verify-otp")]
@@ -77,12 +76,12 @@ public class AuthController : Controller
         var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username && o.Otp == credentials.Otp);
         if (otpEntry == null)
         {
-            return new UnauthorizedObjectResult("Invalid OTP Provided");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Invalid OTP Provided");
         }
 
         if(otpEntry.Expiry < DateTime.UtcNow)
         {
-            return BadRequest("This OTP has Expired");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "This OTP has Expired");
         }
 
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
@@ -92,7 +91,7 @@ public class AuthController : Controller
         }
 
         await _dbContext.SaveChangesAsync();
-        return Ok("OTP verified successfully");
+        return ProcessApiResponse(HttpStatusCode.OK, "OTP verified successfully");
     }
 
     [HttpPost("send-otp")]
@@ -104,14 +103,14 @@ public class AuthController : Controller
         var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username);
         if (otpEntry == null)
         {
-            return new UnauthorizedObjectResult("This user does not exist");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "This user does not exist");
         }
 
         var otp = await _emailService.SendOtpEmail(username);
         otpEntry.Otp = otp;
         otpEntry.Expiry = DateTime.UtcNow.AddMinutes(5);
         await _dbContext.SaveChangesAsync();
-        return Ok("OTP resent successfully");
+        return ProcessApiResponse(HttpStatusCode.OK, "OTP resent successfully");
     }
 
     [HttpPost("reset-password")]
@@ -122,12 +121,12 @@ public class AuthController : Controller
         var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username && o.Otp == credentials.Otp);
         if (otpEntry == null)
         {
-            return new UnauthorizedObjectResult("Invalid OTP Provided");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Invalid OTP Provided");
         }
 
         if (otpEntry.Expiry < DateTime.UtcNow)
         {
-            return BadRequest("This OTP has Expired");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "This OTP has Expired");
         }
 
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
@@ -137,7 +136,7 @@ public class AuthController : Controller
         }
 
         await _dbContext.SaveChangesAsync();
-        return Ok("Password updated successfully");
+        return ProcessApiResponse(HttpStatusCode.OK, "Password updated successfully");
     }
 
     [HttpPost("login")]
@@ -149,20 +148,20 @@ public class AuthController : Controller
         var user = await _dbContext.Users.FirstOrDefaultAsync<User>(u => u.Email == username);
         if(user == null)
         {
-            return BadRequest("User does not exist.");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "This user does not exist");
         }
 
         if (!user.IsVerified)
         {
-            return new UnauthorizedObjectResult("Email verification pending");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Email verification pending");
         }
 
         if(!VerifyPassword(user.PasswordHash, password))
         {
-            return BadRequest("The username and password do not match");
+            return ProcessApiResponse(HttpStatusCode.BadRequest, "The username and password do not match");
         }
 
-        return new OkObjectResult(GenerateToken(user));
+        return ProcessApiResponse(HttpStatusCode.OK, null, GenerateToken(user));
     }
 
     private string HashPassword(string password)

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static API.Common;
+using static API.ApiResponseResolver;
+using System.Net;
 
 namespace API.Chat;
 
@@ -45,6 +47,6 @@ public class ChatHistoryController : Controller
             queries = queries.Take(top).ToList();
         }
 
-        return Ok(queries);
+        return ProcessApiResponse(HttpStatusCode.OK, null, queries);
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static API.Common;
+using static API.ApiResponseResolver;
+using System.Net;
 
 namespace API.ResourceUsage;
 
@@ -29,7 +31,7 @@ public class UsageController : Controller
     public IActionResult GetResourceLimits()
     {
         _logger.LogInformation("Get resource limits request received.");
-        return new OkObjectResult(_appSettings.ResourceLimits);
+        return ProcessApiResponse(HttpStatusCode.OK, null, _appSettings.ResourceLimits);
     }
 
     [HttpGet]
@@ -46,6 +48,6 @@ public class UsageController : Controller
                 Output = u.OutputUsed
             });
 
-        return new OkObjectResult(usages);
+        return ProcessApiResponse(HttpStatusCode.OK, null, usages);
     }
 }

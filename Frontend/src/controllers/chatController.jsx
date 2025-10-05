@@ -39,7 +39,7 @@ export const getFilesSummary = async (dispatch) => {
         dispatch({ type: 'GET_ALL_FILES_SUCCESS', data: files });
     }
     catch (error) {
-        dispatch({ type: 'GET_ALL_FILES_FAILURE', error: error.message || 'An unknown error occurred while fetching files.' });
+        dispatch({ type: 'GET_ALL_FILES_FAILURE', error: error.message });
     }
 }
 
@@ -65,6 +65,6 @@ export const askQuestion = async (question, settings, dispatch) => {
         dispatch({ type: 'FETCHING_ANSWER_SUCCESS', data: aiMessage });
     }
     catch (error) {
-        dispatch({ type: 'FETCHING_ANSWER_FAILURE', error: error.message || 'An unknown error occurred while fetching the answer.' });
+        dispatch({ type: 'FETCHING_ANSWER_FAILURE', error: error.message });
     }
 }

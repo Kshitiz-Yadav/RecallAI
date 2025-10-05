@@ -23,12 +23,12 @@ export const resourceUsageReducer = (state, action) => {
 
 export const getResourceUsage = async (dispatch) => {
     dispatch({ type: 'LOADING_START' });
-    try{
+    try {
         const limits = await CLIENT.getUsageLimitsAsync();
         const usage = await CLIENT.getMonthlyUsageAsync();
         dispatch({ type: 'GET_USAGE_SUCCESS', usage: usage, limits: limits });
     }
     catch (error) {
-        dispatch({ type: 'GET_USAGE_FAILURE', error: error.message || 'An unknown error occurred while fetching resource usage.' });
+        dispatch({ type: 'GET_USAGE_FAILURE', error: error.message });
     }
 }

@@ -11,6 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using static API.FilesManagement.FileValidator;
 using static API.FilesManagement.FileReader;
+using static API.ApiResponseResolver;
 
 namespace API.FilesManagement;
 
@@ -40,17 +41,17 @@ public class FilesManagementController : Controller
         if (userIdHeader == null || !int.TryParse(userIdHeader, out int userId))
         {
             _logger.LogError("Valid User Id header not found");
-            return StatusCode((int)HttpStatusCode.Unauthorized, "Valid User Id header not found");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Valid User Id header not found");
         }
 
         var file = await _dbContext.Files.FirstOrDefaultAsync(file => file.Guid == fileId && file.UserId == userId);
         if (file == null)
         {
             _logger.LogError("File with id: {fileId} does not exist", fileId);
-            return NotFound("File does not exist");
+            return ProcessApiResponse(HttpStatusCode.NotFound, "File does not exist");
         }
 
-        return new OkObjectResult(file);
+        return ProcessApiResponse(HttpStatusCode.OK, null, file);
     }
 
     [HttpGet("filesSummary")]
@@ -61,7 +62,7 @@ public class FilesManagementController : Controller
         if (userIdHeader == null || !int.TryParse(userIdHeader, out int userId))
         {
             _logger.LogError("Valid User Id header not found");
-            return StatusCode((int)HttpStatusCode.Unauthorized, "Valid User Id header not found");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Valid User Id header not found");
         }
 
         var files = await _dbContext.Files
@@ -76,7 +77,7 @@ public class FilesManagementController : Controller
             })
             .ToListAsync();
 
-        return new OkObjectResult(files);
+        return ProcessApiResponse(HttpStatusCode.OK, null, files);
     }
 
     [HttpPost("file")]
@@ -88,21 +89,21 @@ public class FilesManagementController : Controller
         if (userIdHeader == null || !int.TryParse(userIdHeader, out int userId))
         {
             _logger.LogError("Valid User Id header not found");
-            return StatusCode((int)HttpStatusCode.Unauthorized, "Valid User Id header not found");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Valid User Id header not found");
         }
 
         var file = request.File;
         var validationResult = ValidateFile(file);
         if (validationResult.Count > 0)
         {
-            return new BadRequestObjectResult(string.Join(". ", validationResult) + '.');
+            return ProcessApiResponse(HttpStatusCode.BadRequest, string.Join(". ", validationResult) + '.');
         }
 
         var fileStorageLimit = await _usageService.CheckResourceUsage(Resource.FileStorage, userId, file.Length);
         if (fileStorageLimit != 0)
         {
             _logger.LogError("File storage limit reached with code {code}", fileStorageLimit);
-            return new BadRequestObjectResult(fileStorageLimit == 1 ?
+            return ProcessApiResponse(HttpStatusCode.BadRequest, fileStorageLimit == 1 ?
                 "You have reached your file storage limit. Delete previous files to add more." :
                 "You will exceed your file storage limit on uploading this file. Delete previous files to add more.");
         }
@@ -113,7 +114,7 @@ public class FilesManagementController : Controller
         if (embeddingLimit != 0)
         {
             _logger.LogError("Embedding limit reached with code {code}", embeddingLimit);
-            return new BadRequestObjectResult(embeddingLimit == 1 ?
+            return ProcessApiResponse(HttpStatusCode.BadRequest, embeddingLimit == 1 ?
                 "You have reached your monthly file embedding limit." :
                 "You will exceed your monthly file embedding limit on uploading this file.");
         }
@@ -136,7 +137,7 @@ public class FilesManagementController : Controller
         var fileAddedEvent = new FileUploadedEvent { Guid = fileGuid, UserId = userId };
         await _messageSession.Publish(fileAddedEvent);
 
-        return StatusCode((int)HttpStatusCode.Created, $"File uploaded successfully. File Guid: {fileGuid}");
+        return ProcessApiResponse(HttpStatusCode.Created, $"File uploaded successfully. File Guid: {fileGuid}");
     }
 
     [HttpDelete("file")]
@@ -147,14 +148,14 @@ public class FilesManagementController : Controller
         if (userIdHeader == null || !int.TryParse(userIdHeader, out int userId))
         {
             _logger.LogError("Valid User Id header not found");
-            return StatusCode((int)HttpStatusCode.Unauthorized, "Valid User Id header not found");
+            return ProcessApiResponse(HttpStatusCode.Unauthorized, "Valid User Id header not found");
         }
 
         var file = await _dbContext.Files.FirstOrDefaultAsync(f => f.Guid == fileId && f.UserId == userId);
         if (file == null)
         {
             _logger.LogError("File with id: {fileId} does not exist", fileId);
-            return NotFound("File does not exist");
+            return ProcessApiResponse(HttpStatusCode.NotFound, "File does not exist");
         }
         
         await _usageService.UpdateResourceUsage(Resource.FileStorage, userId, -file.Size);
@@ -165,6 +166,6 @@ public class FilesManagementController : Controller
         _dbContext.Files.Remove(file);
         await _dbContext.SaveChangesAsync();
 
-        return NoContent();
+        return ProcessApiResponse(HttpStatusCode.OK);
     }
 }
