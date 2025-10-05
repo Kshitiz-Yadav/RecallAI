@@ -95,7 +95,7 @@ public class AuthController : Controller
         return Ok("OTP verified successfully");
     }
 
-    [HttpPost("resend-otp")]
+    [HttpPost("send-otp")]
     public async Task<IActionResult> ResendOtp([FromBody] UserCredentials credentials)
     {
         _logger.LogInformation("Resending OTP for {userName}", credentials.Email);
@@ -114,7 +114,31 @@ public class AuthController : Controller
         return Ok("OTP resent successfully");
     }
 
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] UserCredentials credentials)
+    {
+        _logger.LogInformation("Reseting password for {userName}", credentials.Email);
+        var username = credentials.Email.ToLower();
+        var otpEntry = await _dbContext.UserAccountVerification.FirstOrDefaultAsync(o => o.Email == username && o.Otp == credentials.Otp);
+        if (otpEntry == null)
+        {
+            return new UnauthorizedObjectResult("Invalid OTP Provided");
+        }
 
+        if (otpEntry.Expiry < DateTime.UtcNow)
+        {
+            return BadRequest("This OTP has Expired");
+        }
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == username);
+        if (user != null)
+        {
+            user.PasswordHash = HashPassword(credentials.Password);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return Ok("Password updated successfully");
+    }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserCredentials credentials)
