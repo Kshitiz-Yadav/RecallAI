@@ -1,23 +1,57 @@
 import api from './client';
 
-// Authentication API calls
-export async function signInAsync(email, password) {
-    const response = await api.post('/Auth/login', { email, password });
-    return response.data.object;
-}
-
-export async function signUpAsync(email, password) {
-    const response = await api.post('/Auth/register', { email, password });
-    return response.data.object;
-}
-
-// Healthcheck API call
-export async function healthCheckAsync() {
-    const response = await api.get('/Healthcheck/health');
-    return response.data.object;
-}
-
 const CLIENT = {
+    // Authentication API calls
+    async signInAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/login', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw error;
+        }
+    },
+
+    async signUpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/register', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async verifyOtpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/verify-otp', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async sendOtpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/send-otp', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async resetPasswordAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/reset-password', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
     // File management API calls
     async fileUploadAsync(formData) {
         try {
@@ -108,7 +142,7 @@ const CLIENT = {
     }
 }
 
-const getErrorMessage = (error) => {
+export const getErrorMessage = (error) => {
     return error?.response?.data?.message || error?.message || error || "An unknown error occurred";
 }
 

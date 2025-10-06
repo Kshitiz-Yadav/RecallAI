@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import SignInPage from './pages/SignInPage';
+import AuthPage from './pages/AuthPage';
 import Header from './components/Header/Header';
 import FilesPage from './pages/FilesPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -29,7 +29,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/auth" element={<SignInPage setAuthStatus={setAuthStatus} />} />
+        <Route path="/auth" element={<AuthPage setAuthStatus={setAuthStatus} />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/chat" element={<ChatPage />} />
