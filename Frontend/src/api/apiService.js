@@ -1,23 +1,57 @@
 import api from './client';
 
-// Authentication API calls
-export async function signInAsync(email, password) {
-    const response = await api.post('/Auth/login', { email, password });
-    return response.data;
-}
-
-export async function signUpAsync(email, password) {
-    const response = await api.post('/Auth/register', { email, password });
-    return response.data;
-}
-
-// Healthcheck API call
-export async function healthCheckAsync() {
-    const response = await api.get('/Healthcheck/health');
-    return response.data;
-}
-
 const CLIENT = {
+    // Authentication API calls
+    async signInAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/login', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw error;
+        }
+    },
+
+    async signUpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/register', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async verifyOtpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/verify-otp', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async sendOtpAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/send-otp', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
+    async resetPasswordAsync(email, password, otp) {
+        try {
+            const response = await api.post('/Auth/reset-password', { email, password, otp });
+            return response.data.object;
+        }
+        catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    },
+
     // File management API calls
     async fileUploadAsync(formData) {
         try {
@@ -27,44 +61,40 @@ const CLIENT = {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
     async getAllFilesAsync() {
         try {
             const response = await api.get('/FilesManagement/filesSummary');
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
     async getFileAsync(fileId) {
         try {
             const response = await api.get(`/FilesManagement/file?fileId=${fileId}`);
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
     async deleteFileAsync(fileId) {
         try {
             const response = await api.delete(`/FilesManagement/file?fileId=${fileId}`);
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
@@ -72,11 +102,10 @@ const CLIENT = {
     async getChatHistoryAsync(skip = 0, top = 0) {
         try {
             const response = await api.get(`/ChatHistory?skip=${skip}&top=${top}`);
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
@@ -84,22 +113,20 @@ const CLIENT = {
     async getMonthlyUsageAsync() {
         try {
             const response = await api.get('/Usage');
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
     async getUsageLimitsAsync() {
         try {
             const response = await api.get('/Usage/limits');
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     },
 
@@ -107,13 +134,16 @@ const CLIENT = {
     async askQuestionAsync(requestData) {
         try {
             const response = await api.post('/Chat', requestData);
-            return response.data;
+            return response.data.object;
         }
         catch (error) {
-            const errorMessage = error?.response?.data || error.message || error;
-            throw new Error(errorMessage);
+            throw new Error(getErrorMessage(error));
         }
     }
+}
+
+export const getErrorMessage = (error) => {
+    return error?.response?.data?.message || error?.message || error || "An unknown error occurred";
 }
 
 export default CLIENT;

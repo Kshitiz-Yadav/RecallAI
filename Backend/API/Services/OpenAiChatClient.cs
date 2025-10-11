@@ -85,7 +85,7 @@ public class OpenAiChatClient : IOpenAiChatClient
         return new ChatResponse
         {
             IsSuccessful = true,
-            StatusCode = response.StatusCode,
+            StatusCode = HttpStatusCode.OK,
             Response = output
         };
     }

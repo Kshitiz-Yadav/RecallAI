@@ -5,6 +5,8 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static API.Common;
+using static API.ApiResponseResolver;
+using System.Net;
 
 namespace API.Chat;
 
@@ -45,7 +47,7 @@ public class ChatController : Controller
         if (!chatResponse.IsSuccessful)
         {
             _logger.LogError("Failed to get LLM response: {status}", chatResponse.StatusCode);
-            return StatusCode((int)chatResponse.StatusCode, chatResponse.Response);
+            return ProcessApiResponse(chatResponse.StatusCode, chatResponse.Response);
         }
 
         if(!chatResponse.Response.Contains(InsufficientInfoMsgPrefix))
@@ -63,6 +65,6 @@ public class ChatController : Controller
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("LLM response fetched successfully.");
-        return Ok(chatResponse);
+        return ProcessApiResponse(HttpStatusCode.OK, null, chatResponse);
     }
 }

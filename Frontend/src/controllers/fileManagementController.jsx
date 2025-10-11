@@ -49,7 +49,7 @@ export const uploadFile = async (file, dispatch) => {
         await getFilesSummary(dispatch);
     }
     catch (error) {
-        dispatch({ type: 'UPLOAD_FAILURE', error: error.message || 'An unknown error occured while uploading the file.' });
+        dispatch({ type: 'UPLOAD_FAILURE', error: error.message });
     }
 }
 
@@ -60,7 +60,7 @@ export const getFilesSummary = async (dispatch) => {
         dispatch({ type: 'GET_ALL_FILES_SUCCESS', data: files });
     }
     catch (error) {
-        dispatch({ type: 'GET_ALL_FILES_FAILURE', error: error.message || 'An unknown error occurred while fetching files.' });
+        dispatch({ type: 'GET_ALL_FILES_FAILURE', error: error.message });
     }
 }
 
@@ -73,7 +73,7 @@ export const deleteFile = async (fileId, dispatch) => {
         await getFilesSummary(dispatch);
     }
     catch (error) {
-        dispatch({ type: 'DELETE_FILE_FAILURE', error: error.message || 'An unknown error occurred while deleting the file.' });
+        dispatch({ type: 'DELETE_FILE_FAILURE', error: error.message });
     }
 }
 
@@ -85,6 +85,6 @@ export const getFile = async (fileId, dispatch) => {
         return file;
     }
     catch (error) {
-        dispatch({ type: 'GET_FILE_FAILURE', error: error.message || 'An unknown error occurred while deleting the file.' });
+        dispatch({ type: 'GET_FILE_FAILURE', error: error.message });
     }
 }
