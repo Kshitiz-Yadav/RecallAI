@@ -219,7 +219,7 @@ export const styles = {
             logo: {
                 button: "p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200",
                 wrapper: "flex items-center space-x-3",
-                icon: "w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center",
+                icon: "w-8 h-8 bg-white flex items-center justify-center",
                 iconText: "text-white font-bold text-sm",
                 text: "hidden sm:block text-xl font-bold text-gray-900"
             },
@@ -294,7 +294,9 @@ export const styles = {
             error: "text-red-600",
             success: "text-green-600",
             warning: "text-yellow-600"
-        }
+        },
+
+        colorHighlight: "text-blue-600",
     },
 
     // Spacing and Layout
@@ -518,7 +520,61 @@ export const styles = {
                 link: "text-xs text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
             }
         }
-    }
+    },
+
+    // Home Page Specific Styles
+    hero: {
+        section: "relative overflow-hidden gray-50",
+        container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28",
+        grid: "grid grid-cols-1 lg:grid-cols-2 gap-12 items-center",
+        content: "space-y-6",
+        badge: "inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-4",
+        heading: "text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight",
+        gradient: "bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
+        description: "text-lg text-gray-600 leading-relaxed",
+        actions: "flex flex-col sm:flex-row gap-4 pt-4",
+        imageWrapper: "relative",
+        image: "rounded-2xl shadow-2xl",
+        floatingCard: "absolute bg-white rounded-lg shadow-xl p-4",
+    },
+
+    features: {
+        section: "py-20 bg-white relative",
+        container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10",
+        header: "text-center mb-16",
+        title: "text-3xl md:text-4xl font-bold text-gray-900 mb-4",
+        subtitle: "text-lg text-gray-600 max-w-2xl mx-auto",
+        grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+        background: "absolute inset-0 opacity-100 pointer-events-none",
+    },
+
+    card: {
+        base: "bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 p-6",
+        icon: "w-12 h-12 rounded-lg flex items-center justify-center mb-4",
+        iconGradient: "bg-gradient-to-br",
+        title: "text-xl font-semibold text-gray-900 mb-2",
+        description: "text-gray-600 leading-relaxed",
+    },
+
+    video: {
+        section: "py-20 gray-50",
+        container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+        header: "text-center mb-12",
+        title: "text-3xl md:text-4xl font-bold text-gray-900 mb-4",
+        subtitle: "text-lg text-gray-600",
+        videoWrapper: "max-w-4xl mx-auto",
+        videoContainer: "relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video",
+        playButton: "absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-30 transition-all cursor-pointer group",
+        playIcon: "w-20 h-20 text-white opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all",
+    },
+
+    cta: {
+        section: "py-20 bg-blue-600",
+        container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center",
+        title: "text-3xl md:text-4xl font-bold text-white mb-4",
+        description: "text-xl text-blue-100 mb-8",
+        button: "inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-lg bg-white text-blue-600 hover:bg-gray-100 focus:ring-4 focus:ring-white focus:ring-opacity-50 transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5",
+    },
 };
 
 // Utility function to combine classes

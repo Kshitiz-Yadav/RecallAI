@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, User, FileText, MessageCircle, Clock, TrendingUp, LogOut } from 'lucide-react';
 import { styles, cn } from '../../styles';
 import { useState, useEffect } from 'react';
+import RecallAiLogo from '../../../public/RecallAI_Logo.svg';
 
 const Header = ({ isLoggedIn, setAuthStatus }) => {
     const location = useLocation();
@@ -143,9 +144,7 @@ const Header = ({ isLoggedIn, setAuthStatus }) => {
                     >
                         <div className={styles.navigation.header.logo.wrapper}>
                             <div className={styles.navigation.header.logo.icon}>
-                                <span className={styles.navigation.header.logo.iconText}>
-                                    <img src="/RecallAI_Logo.jpg" alt="Logo" />
-                                </span>
+                                <img src={RecallAiLogo} alt="Logo" />
                             </div>
                             <span className={styles.navigation.header.logo.text}>Recall AI</span>
                         </div>
