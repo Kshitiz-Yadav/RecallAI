@@ -30,7 +30,7 @@ const PrivacyPolicyContent = () => (
 
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Contact Us</h4>
         <p className="text-gray-700">
-            If you have any questions about this Privacy Policy, please contact us at recallai@gmail.com
+            If you have any questions about this Privacy Policy, please contact us at yourknowledgeamplified@gmail.com
         </p>
     </div>
 );
@@ -66,7 +66,7 @@ const TermsOfServiceContent = () => (
 
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Contact Information</h4>
         <p className="text-gray-700">
-            For questions about these Terms of Service, contact us at recallai@gmail.com
+            For questions about these Terms of Service, contact us at yourknowledgeamplified@gmail.com
         </p>
     </div>
 );
@@ -86,7 +86,7 @@ const CookiePolicyContent = () => (
 
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Contact Us</h4>
         <p className="text-gray-700">
-            If you have questions about our use of cookies, please contact us at recallai@gmail.com
+            If you have questions about our use of cookies, please contact us at yourknowledgeamplified@gmail.com
         </p>
     </div>
 );
@@ -130,9 +130,9 @@ const Footer = () => {
                             <h3 className={styles.footer.section.title}>Support</h3>
                             <ul className={styles.footer.section.list}>
                                 <li>
-                                    <a href="mailto:recallai@gmail.com?subject=Support%20Request&body=Hi%20Recall%20AI%20Team," className={cn(styles.footer.link.base, styles.footer.link.inline)}>
+                                    <a href="mailto:yourknowledgeamplified@gmail.com?subject=Support%20Request&body=Hi%20Recall%20AI%20Team," className={cn(styles.footer.link.base, styles.footer.link.inline)}>
                                         <Mail className="w-4 h-4" />
-                                        <span>recallai@gmail.com</span>
+                                        <span>yourknowledgeamplified@gmail.com</span>
                                     </a>
                                 </li>
                             </ul>
