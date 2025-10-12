@@ -6,11 +6,12 @@ import { styles, cn } from '../styles';
 import { chatReducer, initialState, getFilesSummary, askQuestion } from '../controllers/chatController';
 import LoadingSpinner from '../components/Global/LoadingSpinner';
 import ErrorBanner from '../components/Global/ErrorBanner';
+import InfoBanner from '../components/Global/InfoBanner';
 import { Models } from '../enums/models';
 
 const ChatPage = () => {
     const [state, dispatch] = useReducer(chatReducer, initialState);
-    const { loading, error, files, isFetchingAnswer, messages } = state;
+    const { loading, info, error, files, isFetchingAnswer, messages } = state;
 
     const [isPanelOpen, setIsPanelOpen] = useState(true);
     const [settings, setSettings] = useState({
@@ -27,6 +28,10 @@ const ChatPage = () => {
 
     const clearErrors = () => {
         dispatch({ type: 'CLEAR_ERRORS' });
+    }
+
+    const clearMessages = () => {
+        dispatch({ type: 'CLEAR_MESSAGES' });
     }
 
     const handleSendMessage = async (content) => {
@@ -77,6 +82,11 @@ const ChatPage = () => {
                 {/* Error Banner */}
                 <div className={styles.banners.placement}>
                     <ErrorBanner errorMessage={error} onClose={clearErrors} />
+                </div>
+
+                {/* Info Banner */}
+                <div className={styles.banners.placement}>
+                    <InfoBanner message={info} onClose={clearMessages} />
                 </div>
 
                 {/* Main Content */}

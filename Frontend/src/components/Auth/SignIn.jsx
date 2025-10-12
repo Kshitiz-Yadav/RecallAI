@@ -26,10 +26,10 @@ const SignIn = ({ onSubmit, formData, onChange, loading, error, successMessage, 
         )}
 
         <InputField
-            label="Username"
+            label="Email"
             name="username"
             type="text"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             icon={User}
             value={formData.username}
             onChange={onChange}

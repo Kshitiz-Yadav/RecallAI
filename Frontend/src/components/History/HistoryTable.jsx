@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { styles, cn } from '../../styles';
 import { ChevronDown, MessageSquare } from 'lucide-react';
 import { ModelLabels } from '../../enums/models';
+import ReactMarkdown from 'react-markdown';
 
 const HistoryTable = ({ data = [], className = "" }) => {
     const [expandedItems, setExpandedItems] = useState(new Set());
@@ -154,7 +155,7 @@ const HistoryTable = ({ data = [], className = "" }) => {
                             {isExpanded && (
                                 <div className={styles.historyTable.item.details.wrapper}>
                                     <div className={styles.historyTable.item.details.content}>
-                                        {item.answer}
+                                        <ReactMarkdown>{item.answer}</ReactMarkdown>
                                     </div>
                                 </div>
                             )}

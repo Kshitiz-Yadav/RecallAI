@@ -2,7 +2,7 @@ import { Lock, User, AlertCircle, Loader2 } from 'lucide-react';
 import { cn, styles } from '../../styles';
 import InputField from './InputField'
 
-const SignUp = ({ onSubmit, formData, onChange, loading, error, onNavigate }) => (
+const SignUp = ({ onSubmit, formData, onChange, loading, error, onNavigate, passwordFeedback }) => (
     <form onSubmit={onSubmit} className="space-y-6">
         <div className="text-center mb-8">
             <h2 className={styles.typography.headings.h2}>Create Account</h2>
@@ -19,10 +19,10 @@ const SignUp = ({ onSubmit, formData, onChange, loading, error, onNavigate }) =>
         )}
 
         <InputField
-            label="Username"
+            label="Email"
             name="username"
             type="text"
-            placeholder="Choose a username"
+            placeholder="Enter your email"
             icon={User}
             value={formData.username}
             onChange={onChange}
@@ -40,9 +40,33 @@ const SignUp = ({ onSubmit, formData, onChange, loading, error, onNavigate }) =>
             disabled={loading}
         />
 
+        {formData.password && (
+            <div className="space-y-2">
+                <div className="w-full h-2 bg-gray-200 rounded-full">
+                    <div 
+                        className={cn(
+                            "h-2 rounded-full transition-all duration-300",
+                            passwordFeedback?.strength <= 40 ? 'bg-red-500' :
+                            passwordFeedback?.strength <= 80 ? 'bg-yellow-500' :
+                            'bg-green-500'
+                        )}
+                        style={{
+                            width: passwordFeedback?.strength ? `${passwordFeedback.strength}%` : '0%'
+                        }}
+                    />
+                </div>
+                <p className={cn(
+                    styles.typography.body.small,
+                    passwordFeedback.isStrong ? 'text-green-600' : 'text-gray-600'
+                )}>
+                    {passwordFeedback.message}
+                </p>
+            </div>
+        )}
+
         <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !passwordFeedback.isStrong}
             className={cn(
                 styles.buttons.base,
                 styles.buttons.variants.primary,

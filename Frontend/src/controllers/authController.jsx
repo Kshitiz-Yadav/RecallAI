@@ -17,6 +17,8 @@ export const authReducer = (state, action) => {
             return { ...state, error: null, successMessage: null };
         case 'SET_VIEW':
             return { ...state, view: action.view };
+        case 'SET_ERROR':
+            return { ...state, error: action.error };
         case 'REQUEST_FAILURE':
             return { ...state, loading: false, error: action.error, successMessage: null };
         case 'SIGNIN_SUCCESS':
