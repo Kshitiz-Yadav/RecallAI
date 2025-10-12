@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare, Info } from 'lucide-react';
 import { styles, cn } from '../../styles';
+import ReactMarkdown from 'react-markdown';
 
 const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isFetchingAnswer }) => {
     const [inputValue, setInputValue] = useState('');
@@ -95,7 +96,7 @@ const ChatWindow = ({ messages, onSendMessage, oldChatLimit, isFetchingAnswer })
                                             : "bg-gray-100 text-gray-900"
                                     )}
                                 >
-                                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                                    <div className="text-sm whitespace-pre-wrap"><ReactMarkdown>{msg.content}</ReactMarkdown></div>
                                     <span className={cn(
                                         "text-xs mt-1 block",
                                         msg.role === 'user' ? "text-blue-100" : "text-gray-500"

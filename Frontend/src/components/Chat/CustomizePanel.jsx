@@ -15,7 +15,7 @@ const CustomizePanel = ({ isOpen, onClose, settings, onSettingsChange, files }) 
 
     useEffect(() => {
         onSettingsChange({
-            selectedFiles,
+            selectedFiles: selectedFiles.map(file => file.guid),
             topK,
             chatModel,
             maxWords,
