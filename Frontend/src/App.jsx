@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
-import Header from './components/Header/Header';
+import Header from './components/Global/Header';
 import FilesPage from './pages/FilesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RequireAuth from './components/Auth/RequireAuth';
