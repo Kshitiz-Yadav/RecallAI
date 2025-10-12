@@ -2,9 +2,10 @@ import { useEffect, useReducer } from "react";
 import { resourceUsageReducer, initialState, getResourceUsage } from "../controllers/resourceUsageController";
 import ErrorBanner from "../components/Global/ErrorBanner";
 import LoadingSpinner from "../components/Global/LoadingSpinner";
-import { BarChart3, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { Info, BarChart3, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 import { styles, cn } from '../styles';
 import UsageBar from "../components/Usage/UsageBar";
+import Tooltip from "../components/Global/Tooltip";
 
 
 const ResourceUsagePage = () => {
@@ -83,15 +84,21 @@ const ResourceUsagePage = () => {
             <div className={styles.page.content}>
                 {/* Header */}
                 <div className={styles.page.header.wrapper}>
-                    <div className={styles.page.header.title}>
-                        <TrendingUp className="w-8 h-8 text-blue-600" />
-                        <h1 className={styles.typography.headings.h1}>Resource Usage Dashboard</h1>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className={styles.page.header.title}>
+                                <TrendingUp className="w-8 h-8 text-blue-600" />
+                                <h1 className={styles.typography.headings.h1}>Resource Usage Dashboard</h1>
+                            </div>
+                            <p className={styles.typography.body.base}>
+                                Monitor your monthly resource consumption and limits
+                            </p>
+                        </div>
+                        <Tooltip text="The usage for all resources except File Storage will reset at the start of each month.">
+                            <Info className="w-6 h-6 text-gray-400 hover:text-gray-600 cursor-help transition-colors" />
+                        </Tooltip>
                     </div>
-                    <p className={styles.typography.body.base}>
-                        Monitor your monthly resource consumption and limits
-                    </p>
                 </div>
-
                 <div className={styles.banners.placement}>
                     <ErrorBanner errorMessage={error} onClose={clearErrors} />
                 </div>
