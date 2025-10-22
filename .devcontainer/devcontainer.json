@@ -1,8 +1,8 @@
 {
     "name": "RecallAI",
     "dockerComposeFile": "../Docker/docker-compose.prod.yaml",
-    "service": "nginx",
-    "runServices": ["database","rabbitmq","qdrant","frontend","migrator","api","nginx"],
+    "service": "api",
+    // "runServices": ["database","rabbitmq","qdrant","frontend","migrator","api","nginx"],
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "forwardPorts": [
         3000,
@@ -41,9 +41,9 @@
         "OPEN_AI_KEY": {
             "description": "OpenAI API Key"
         }
-    },
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
+    // },
+    // "build": {
+    //     "dockerfile": "Dockerfile",
+    //     "context": ".."
     }
 }
