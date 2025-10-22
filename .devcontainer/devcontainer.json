@@ -1,49 +1,54 @@
 {
     "name": "RecallAI",
-    "dockerComposeFile": "../Docker/docker-compose.prod.yaml",
+    "dockerComposeFile": ["../Docker/docker-compose.prod.yaml"],
     "service": "api",
-    // "runServices": ["database","rabbitmq","qdrant","frontend","migrator","api","nginx"],
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "forwardPorts": [
-        3000,
-        7070,
-        15672,
-        6333
-    ],
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-dotnettools.csharp",
+                "ms-azuretools.vscode-docker",
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode"
             ]
         }
     },
-    "secrets": {
-        "POSTGRES_USERNAME": {
-            "description": "Postgres DB username"
+    "forwardPorts": [3000, 7070, 6333, 5672, 15672],
+    "portsAttributes": {
+        "3000": {
+            "label": "Frontend",
+            "protocol": "http",
+            "visibility": "public"
         },
-        "POSTGRES_PASSWORD": {
-            "description": "Postgres DB password"
+        "7070": {
+            "label": "API",
+            "protocol": "http",
+            "visibility": "public"
         },
-        "RABBIT_MQ_USERNAME": {
-            "description": "Rabbit MQ username"
+        "6333": {
+            "label": "Qdrant",
+            "protocol": "http",
+            "visibility": "public"
         },
-        "RABBIT_MQ_PASSWORD": {
-            "description": "Rabbit MQ password"
+        "5672": {
+            "label": "RabbitMQ",
+            "protocol": "amqp",
+            "visibility": "public"
         },
-        "SMTP_EMAIL": {
-            "description": "SMTP EMail address"
-        },
-        "SMTP_PASSWORD": {
-            "description": "SMTP EMail password"
-        },
-        "OPEN_AI_KEY": {
-            "description": "OpenAI API Key"
+        "15672": {
+            "label": "RabbitMQ Management",
+            "protocol": "http",
+            "visibility": "public"
         }
-    // },
-    // "build": {
-    //     "dockerfile": "Dockerfile",
-    //     "context": ".."
-    }
+    },
+    "remoteEnv": {
+        "POSTGRES_USERNAME": "${localEnv:POSTGRES_USERNAME}",
+        "POSTGRES_PASSWORD": "${localEnv:POSTGRES_PASSWORD}",
+        "RABBIT_MQ_USERNAME": "${localEnv:RABBIT_MQ_USERNAME}",
+        "RABBIT_MQ_PASSWORD": "${localEnv:RABBIT_MQ_PASSWORD}",
+        "OPEN_AI_KEY": "${localEnv:OPEN_AI_KEY}",
+        "SMTP_EMAIL": "${localEnv:SMTP_EMAIL}",
+        "SMTP_PASSWORD": "${localEnv:SMTP_PASSWORD}"
+    },
+    "postCreateCommand": "docker-compose -f Docker/docker-compose.prod.yaml up -d"
 }

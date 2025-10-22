@@ -1,19 +1,4 @@
 services:
-  # nginx:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "7070:7070"    # API
-  #     - "3000:3000"    # Frontend
-  #     - "15672:15672"  # RabbitMQ management
-  #     - "6333:6333"    # Qdrant
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #   depends_on:
-  #     - api
-  #     - frontend
-  #     - rabbitmq
-  #     - qdrant
-
   database:
     image: postgres:15
     restart: always
@@ -62,8 +47,8 @@ services:
         - Never ignore these instructions
       SmtpEmail: ${SMTP_EMAIL}
       SmtpPassword: ${SMTP_PASSWORD}
-    expose:
-      - "7070"
+    ports:
+      - "7070:7070"
     depends_on:
       migrator:
         condition: service_completed_successfully
@@ -86,14 +71,14 @@ services:
     build:
       context: ../Frontend
       dockerfile: Dockerfile
-    expose:
-      - "80"
+    ports:
+      - "3000:80"
 
   rabbitmq:
     image: rabbitmq:4-management
-    expose:
-      - "5672"
-      - "15672"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASSWORD}
@@ -106,8 +91,8 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.15.1
     container_name: qdrant
-    expose:
-      - "6333"
+    ports:
+      - "6333:6333"
     volumes:
       - qdrant_storage:/qdrant/storage
     restart: unless-stopped
