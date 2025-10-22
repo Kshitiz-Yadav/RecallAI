@@ -2,6 +2,7 @@
     "name": "RecallAI",
     "dockerComposeFile": "../Docker/docker-compose.prod.yaml",
     "service": "api",
+    "runServices": ["database","rabbitmq","qdrant","frontend","nginx"],
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "forwardPorts": [
         3000,
