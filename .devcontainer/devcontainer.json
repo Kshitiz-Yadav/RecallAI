@@ -9,7 +9,6 @@
         15672,
         6333
     ],
-    "postCreateCommand": "docker compose up -d --build",
     "customizations": {
         "vscode": {
             "extensions": [
