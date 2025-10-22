@@ -41,14 +41,28 @@
             "visibility": "public"
         }
     },
-    "remoteEnv": {
-        "POSTGRES_USERNAME": "${localEnv:POSTGRES_USERNAME}",
-        "POSTGRES_PASSWORD": "${localEnv:POSTGRES_PASSWORD}",
-        "RABBIT_MQ_USERNAME": "${localEnv:RABBIT_MQ_USERNAME}",
-        "RABBIT_MQ_PASSWORD": "${localEnv:RABBIT_MQ_PASSWORD}",
-        "OPEN_AI_KEY": "${localEnv:OPEN_AI_KEY}",
-        "SMTP_EMAIL": "${localEnv:SMTP_EMAIL}",
-        "SMTP_PASSWORD": "${localEnv:SMTP_PASSWORD}"
+    "secrets": {
+        "POSTGRES_USERNAME": {
+            "description": "Postgres DB username"
+        },
+        "POSTGRES_PASSWORD": {
+            "description": "Postgres DB password"
+        },
+        "RABBIT_MQ_USERNAME": {
+            "description": "Rabbit MQ username"
+        },
+        "RABBIT_MQ_PASSWORD": {
+            "description": "Rabbit MQ password"
+        },
+        "SMTP_EMAIL": {
+            "description": "SMTP EMail address"
+        },
+        "SMTP_PASSWORD": {
+            "description": "SMTP EMail password"
+        },
+        "OPEN_AI_KEY": {
+            "description": "OpenAI API Key"
+        }
     },
     "postCreateCommand": "docker-compose -f Docker/docker-compose.prod.yaml up -d"
 }
