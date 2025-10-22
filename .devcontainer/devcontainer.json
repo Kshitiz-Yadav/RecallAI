@@ -1,0 +1,40 @@
+{
+  "name": "RecallAI",
+  "dockerComposeFile": "../Docker/docker-compose.prod.yaml",
+  "service": "backend",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [3000, 7070, 15672, 6333],
+  "postCreateCommand": "docker compose up -d --build",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "secrets": {
+    "POSTGRES_USERNAME": {
+      "description": "Postgres DB username"
+    },
+    "POSTGRES_PASSWORD": {
+      "description": "Postgres DB password"
+    },
+    "RABBIT_MQ_USERNAME": {
+      "description": "Rabbit MQ username"
+    },
+    "RABBIT_MQ_PASSWORD": {
+      "description": "Rabbit MQ password"
+    },
+    "SMTP_EMAIL": {
+      "description": "SMTP EMail address"
+    },
+    "SMTP_PASSWORD": {
+      "description": "SMTP EMail password"
+    },
+    "OPEN_AI_KEY": {
+      "description": "OpenAI API Key"
+    }
+  }
+}
