@@ -1,7 +1,7 @@
 {
   "name": "RecallAI",
   "dockerComposeFile": "../Docker/docker-compose.prod.yaml",
-  "service": "backend",
+  "service": "api",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [3000, 7070, 15672, 6333],
   "postCreateCommand": "docker compose up -d --build",
