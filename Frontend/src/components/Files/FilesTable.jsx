@@ -124,237 +124,239 @@ const FilesTable = ({ files = [], dispatch }) => {
     return (
         <div className={styles.cards.base}>
             <div className={styles.tables.wrapper}>
-                <table className={cn(styles.tables.base, "table-fixed")}>
-                    <thead className={styles.tables.header}>
-                        <tr>
-                            <th className={cn(styles.tables.headerCell, "w-16")}>
-                                #
-                            </th>
-                            <th
-                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-80")}
-                                onClick={() => handleSort('name')}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span>Filename</span>
-                                    <span className="flex-shrink-0 ml-2">
-                                        {renderSortIcon('name')}
-                                    </span>
-                                </div>
-                            </th>
-                            <th
-                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-40")}
-                                onClick={() => handleSort('uploadDate')}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span>Upload Date</span>
-                                    <span className="flex-shrink-0 ml-2">
-                                        {renderSortIcon('uploadDate')}
-                                    </span>
-                                </div>
-                            </th>
-                            <th
-                                className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-24")}
-                                onClick={() => handleSort('size')}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span>Size</span>
-                                    <span className="flex-shrink-0 ml-2">
-                                        {renderSortIcon('size')}
-                                    </span>
-                                </div>
-                            </th>
-                            <th className={cn(styles.tables.headerCell, "w-28")}>
-                                Status
-                            </th>
-                            <th className={cn(styles.tables.headerCell, "w-24")}>
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className={styles.tables.body}>
-                        {paginatedFiles.map((file, index) => (
-                            <tr key={file.guid} className={styles.tables.row}>
-                                <td className={cn(styles.tables.cell, "w-16")}>
-                                    {startIndex + index + 1}
-                                </td>
-                                <td className={cn(styles.tables.cell, "w-80")}>
-                                    <div className="flex items-center">
-                                        <File className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
-                                        <span className="font-medium truncate" title={file.name}>
-                                            {file.name}
+                <div className="overflow-x-auto">
+                    <table className={cn(styles.tables.base, "min-w-full")}>
+                        <thead className={styles.tables.header}>
+                            <tr>
+                                <th className={cn(styles.tables.headerCell, "w-16")}>
+                                    #
+                                </th>
+                                <th
+                                    className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-80")}
+                                    onClick={() => handleSort('name')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span>Filename</span>
+                                        <span className="flex-shrink-0 ml-2">
+                                            {renderSortIcon('name')}
                                         </span>
                                     </div>
-                                </td>
-                                <td className={cn(styles.tables.cell, "w-40")}>
-                                    {formatDate(file.uploadDate)}
-                                </td>
-                                <td className={cn(styles.tables.cell, "w-24")}>
-                                    {formatFileSize(file.size)}
-                                </td>
-                                <td className={cn(styles.tables.cell, "w-28")}>
-                                    <span className={cn(
-                                        styles.badges.base,
-                                        styles.badges.variants[statusMap[file.status].variant]
-                                    )}>
-                                        {statusMap[file.status].label}
-                                    </span>
-                                </td>
-                                <td className={cn(styles.tables.cell, "w-24")}>
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            onClick={() => handleViewFile(file)}
-                                            className={cn(
-                                                styles.buttons.base,
-                                                styles.buttons.variants.ghost,
-                                                styles.buttons.sizes.sm,
-                                                styles.buttons.iconOnly
-                                            )}
-                                            title="View file"
-                                        >
-                                            <Eye className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteFile(file)}
-                                            className={cn(
-                                                styles.buttons.base,
-                                                styles.buttons.variants.ghost,
-                                                styles.buttons.sizes.sm,
-                                                styles.buttons.iconOnly,
-                                                "text-red-600 hover:text-red-700 hover:bg-red-50"
-                                            )}
-                                            title="Delete file"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Pagination */}
-            <div className={styles.historyTable.pagination.wrapper}>
-                <div className="flex items-center justify-between w-full">
-                    {/* Page info */}
-                    <div className={styles.historyTable.pagination.info}>
-                        Showing <span className={styles.historyTable.pagination.infoHighlight}>
-                            {startIndex + 1}
-                        </span> to <span className={styles.historyTable.pagination.infoHighlight}>
-                            {Math.min(startIndex + pageSize, sortedFiles.length)}
-                        </span> of <span className={styles.historyTable.pagination.infoHighlight}>
-                            {sortedFiles.length}
-                        </span> files
-                    </div>
-
-                    {/* Page size selector */}
-                    <div className={styles.historyTable.pagination.pageSize.wrapper}>
-                        <span className={styles.historyTable.pagination.pageSize.label}>
-                            Show:
-                        </span>
-                        <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                                setCurrentPage(1);
-                            }}
-                            className={cn(
-                                styles.historyTable.pagination.pageSize.select,
-                                "ml-2"
-                            )}
-                        >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={25}>25</option>
-                            <option value={50}>50</option>
-                        </select>
-                    </div>
-
-                    {/* Pagination controls */}
-                    <div className={styles.historyTable.pagination.controls}>
-                        <button
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className={cn(
-                                styles.historyTable.pagination.button.base,
-                                currentPage === 1
-                                    ? styles.historyTable.pagination.button.disabled
-                                    : styles.historyTable.pagination.button.enabled
-                            )}
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1" />
-                            Previous
-                        </button>
-
-                        {/* Page numbers */}
-                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                            let pageNum;
-                            if (totalPages <= 5) {
-                                pageNum = i + 1;
-                            } else if (currentPage <= 3) {
-                                pageNum = i + 1;
-                            } else if (currentPage >= totalPages - 2) {
-                                pageNum = totalPages - 4 + i;
-                            } else {
-                                pageNum = currentPage - 2 + i;
-                            }
-
-                            return (
-                                <button
-                                    key={pageNum}
-                                    onClick={() => setCurrentPage(pageNum)}
-                                    className={cn(
-                                        styles.historyTable.pagination.button.base,
-                                        currentPage === pageNum
-                                            ? styles.historyTable.pagination.button.current
-                                            : styles.historyTable.pagination.button.enabled
-                                    )}
+                                </th>
+                                <th
+                                    className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-40")}
+                                    onClick={() => handleSort('uploadDate')}
                                 >
-                                    {pageNum}
-                                </button>
-                            );
-                        })}
-
-                        <button
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                            disabled={currentPage === totalPages || totalPages === 0}
-                            className={cn(
-                                styles.historyTable.pagination.button.base,
-                                currentPage === totalPages || totalPages === 0
-                                    ? styles.historyTable.pagination.button.disabled
-                                    : styles.historyTable.pagination.button.enabled
-                            )}
-                        >
-                            Next
-                            <ChevronRight className="w-4 h-4 ml-1" />
-                        </button>
-                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span>Upload Date</span>
+                                        <span className="flex-shrink-0 ml-2">
+                                            {renderSortIcon('uploadDate')}
+                                        </span>
+                                    </div>
+                                </th>
+                                <th
+                                    className={cn(styles.tables.headerCell, "cursor-pointer hover:bg-gray-100 w-24")}
+                                    onClick={() => handleSort('size')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span>Size</span>
+                                        <span className="flex-shrink-0 ml-2">
+                                            {renderSortIcon('size')}
+                                        </span>
+                                    </div>
+                                </th>
+                                <th className={cn(styles.tables.headerCell, "w-28")}>
+                                    Status
+                                </th>
+                                <th className={cn(styles.tables.headerCell, "w-24")}>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className={styles.tables.body}>
+                            {paginatedFiles.map((file, index) => (
+                                <tr key={file.guid} className={styles.tables.row}>
+                                    <td className={cn(styles.tables.cell, "w-16")}>
+                                        {startIndex + index + 1}
+                                    </td>
+                                    <td className={cn(styles.tables.cell, "w-80")}>
+                                        <div className="flex items-center">
+                                            <File className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
+                                            <span className="font-medium truncate" title={file.name}>
+                                                {file.name}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className={cn(styles.tables.cell, "w-40")}>
+                                        {formatDate(file.uploadDate)}
+                                    </td>
+                                    <td className={cn(styles.tables.cell, "w-24")}>
+                                        {formatFileSize(file.size)}
+                                    </td>
+                                    <td className={cn(styles.tables.cell, "w-28")}>
+                                        <span className={cn(
+                                            styles.badges.base,
+                                            styles.badges.variants[statusMap[file.status].variant]
+                                        )}>
+                                            {statusMap[file.status].label}
+                                        </span>
+                                    </td>
+                                    <td className={cn(styles.tables.cell, "w-24")}>
+                                        <div className="flex items-center space-x-2">
+                                            <button
+                                                onClick={() => handleViewFile(file)}
+                                                className={cn(
+                                                    styles.buttons.base,
+                                                    styles.buttons.variants.ghost,
+                                                    styles.buttons.sizes.sm,
+                                                    styles.buttons.iconOnly
+                                                )}
+                                                title="View file"
+                                            >
+                                                <Eye className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteFile(file)}
+                                                className={cn(
+                                                    styles.buttons.base,
+                                                    styles.buttons.variants.ghost,
+                                                    styles.buttons.sizes.sm,
+                                                    styles.buttons.iconOnly,
+                                                    "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                )}
+                                                title="Delete file"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            {showDeleteModal && (
-                <ConfirmationModal
-                    itemName={selectedFile ? selectedFile.name : ''}
-                    title='Delete File?'
-                    message='Are you sure you want to delete this file? This action cannot be undone.'
-                    isOpen={showDeleteModal}
-                    onClose={() => setShowDeleteModal(false)}
-                    onConfirm={() => handleDeleteConfirmation()}
-                />
-            )}
+                {/* Pagination */}
+                <div className={styles.historyTable.pagination.wrapper}>
+                    <div className="flex flex-col md:flex-row items-center md:justify-between w-full space-y-4 md:space-y-0">
+                        {/* Page info */}
+                        <div className={cn(styles.historyTable.pagination.info, "text-center md:text-left")}>
+                            Showing <span className={styles.historyTable.pagination.infoHighlight}>
+                                {startIndex + 1}
+                            </span> to <span className={styles.historyTable.pagination.infoHighlight}>
+                                {Math.min(startIndex + pageSize, sortedFiles.length)}
+                            </span> of <span className={styles.historyTable.pagination.infoHighlight}>
+                                {sortedFiles.length}
+                            </span> files
+                        </div>
 
-            {/* View File Modal */}
-            {showModal && selectedFile && (
-                <Modal title={`File Content - ${selectedFile.name}`} isOpen={showModal} onClose={() => setShowModal(false)}>
-                    <div className="space-y-4">
-                        <div>
-                            <p className="text-gray-900 mt-1 text-justify">{fileContent}</p>
+                        {/* Page size selector */}
+                        <div className={cn(styles.historyTable.pagination.pageSize.wrapper, "text-center")}>
+                            <span className={styles.historyTable.pagination.pageSize.label}>
+                                Show:
+                            </span>
+                            <select
+                                value={pageSize}
+                                onChange={(e) => {
+                                    setPageSize(Number(e.target.value));
+                                    setCurrentPage(1);
+                                }}
+                                className={cn(
+                                    styles.historyTable.pagination.pageSize.select,
+                                    "ml-2"
+                                )}
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
+                            </select>
+                        </div>
+
+                        {/* Pagination controls */}
+                        <div className={cn(styles.historyTable.pagination.controls, "flex justify-center w-full md:w-auto")}>
+                            <button
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className={cn(
+                                    styles.historyTable.pagination.button.base,
+                                    currentPage === 1
+                                        ? styles.historyTable.pagination.button.disabled
+                                        : styles.historyTable.pagination.button.enabled
+                                )}
+                            >
+                                <ChevronLeft className="w-4 h-4 mr-1" />
+                                Previous
+                            </button>
+
+                            {/* Page numbers */}
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                let pageNum;
+                                if (totalPages <= 5) {
+                                    pageNum = i + 1;
+                                } else if (currentPage <= 3) {
+                                    pageNum = i + 1;
+                                } else if (currentPage >= totalPages - 2) {
+                                    pageNum = totalPages - 4 + i;
+                                } else {
+                                    pageNum = currentPage - 2 + i;
+                                }
+
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => setCurrentPage(pageNum)}
+                                        className={cn(
+                                            styles.historyTable.pagination.button.base,
+                                            currentPage === pageNum
+                                                ? styles.historyTable.pagination.button.current
+                                                : styles.historyTable.pagination.button.enabled
+                                        )}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+
+                            <button
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages || totalPages === 0}
+                                className={cn(
+                                    styles.historyTable.pagination.button.base,
+                                    currentPage === totalPages || totalPages === 0
+                                        ? styles.historyTable.pagination.button.disabled
+                                        : styles.historyTable.pagination.button.enabled
+                                )}
+                            >
+                                Next
+                                <ChevronRight className="w-4 h-4 ml-1" />
+                            </button>
                         </div>
                     </div>
-                </Modal>
+                </div>
 
-            )}
+                {showDeleteModal && (
+                    <ConfirmationModal
+                        itemName={selectedFile ? selectedFile.name : ''}
+                        title='Delete File?'
+                        message='Are you sure you want to delete this file? This action cannot be undone.'
+                        isOpen={showDeleteModal}
+                        onClose={() => setShowDeleteModal(false)}
+                        onConfirm={() => handleDeleteConfirmation()}
+                    />
+                )}
+
+                {/* View File Modal */}
+                {showModal && selectedFile && (
+                    <Modal title={`File Content - ${selectedFile.name}`} isOpen={showModal} onClose={() => setShowModal(false)}>
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-gray-900 mt-1 text-justify">{fileContent}</p>
+                            </div>
+                        </div>
+                    </Modal>
+
+                )}
+            </div>
         </div>
     );
 };

@@ -13,7 +13,7 @@ const ChatPage = () => {
     const [state, dispatch] = useReducer(chatReducer, initialState);
     const { loading, info, error, files, isFetchingAnswer, messages } = state;
 
-    const [isPanelOpen, setIsPanelOpen] = useState(true);
+    const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth >= 768);
     const [settings, setSettings] = useState({
         selectedFiles: [],
         topK: 5,

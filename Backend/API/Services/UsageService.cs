@@ -68,6 +68,7 @@ public class UsageService : IUsageService
                 OutputUsed = resource == Resource.TextEmbedding3Small ? -1 : long.Max(outputChange, 0)
             });
 
+            await _dbContext.SaveChangesAsync();
             return;
         }
 
@@ -118,6 +119,7 @@ public class UsageService : IUsageService
                 OutputUsed = 0
             });
 
+            await _dbContext.SaveChangesAsync();
             return;
         }
 

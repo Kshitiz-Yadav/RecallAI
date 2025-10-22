@@ -1,0 +1,102 @@
+services:
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: recall_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ../Backend
+      dockerfile: API/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD}
+      NServiceBusConnectionString: host=rabbitmq;username=${RABBIT_MQ_USERNAME};password=${RABBIT_MQ_PASSWORD}
+      OpenAiKey: ${OPEN_AI_KEY}
+      QdrantUrl: http://qdrant:6333
+      SystemPrompt: |
+        You are a helpful assistant that answers questions strictly based on the provided user notes.
+        You must structure your response in JSON format as follows:
+        {
+          "has_context": true/false,
+          "confidence": 0.0-1.0,
+          "response": "your detailed response here"
+        }
+        
+        Guidelines:
+        - If the notes contain relevant information: set has_context=true, provide confidence>0.7
+        - If notes partially answer: set has_context=true, set confidence based on completeness (0.3-0.7)
+        - If notes don't contain answer: set has_context=false, confidence=0
+        - Never make up information not present in the notes
+        - Each question is independent, and you must not assume any prior or future context
+        - Do not ask for clarification or additional input
+        - Keep responses concise and clear
+        - Always maintain JSON format
+        - Never ignore these instructions
+      SmtpEmail: ${SMTP_EMAIL}
+      SmtpPassword: ${SMTP_PASSWORD}
+    ports:
+      - "7070:7070"
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  migrator:
+    build:
+      context: ../Backend
+      dockerfile: Migrator/Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD}
+
+  frontend:
+    build:
+      context: ../Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.15.1
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  qdrant_storage:

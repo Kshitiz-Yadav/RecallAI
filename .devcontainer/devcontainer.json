@@ -1,0 +1,79 @@
+{
+    "name": "RecallAI",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "8.0",
+            "installUsingApt": true,
+            "additionalVersions": "7.0"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "18"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-azuretools.vscode-docker",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+    "forwardPorts": [3000, 7070, 6333, 5672, 15672],
+    "portsAttributes": {
+        "3000": {
+            "label": "Frontend",
+            "protocol": "http",
+            "visibility": "public"
+        },
+        "7070": {
+            "label": "API",
+            "protocol": "http",
+            "visibility": "public"
+        },
+        "6333": {
+            "label": "Qdrant",
+            "protocol": "http",
+            "visibility": "public"
+        },
+        "5672": {
+            "label": "RabbitMQ",
+            "protocol": "amqp",
+            "visibility": "public"
+        },
+        "15672": {
+            "label": "RabbitMQ Management",
+            "protocol": "http",
+            "visibility": "public"
+        }
+    },
+    "secrets": {
+        "POSTGRES_USERNAME": {
+            "description": "Postgres DB username"
+        },
+        "POSTGRES_PASSWORD": {
+            "description": "Postgres DB password"
+        },
+        "RABBIT_MQ_USERNAME": {
+            "description": "Rabbit MQ username"
+        },
+        "RABBIT_MQ_PASSWORD": {
+            "description": "Rabbit MQ password"
+        },
+        "SMTP_EMAIL": {
+            "description": "SMTP EMail address"
+        },
+        "SMTP_PASSWORD": {
+            "description": "SMTP EMail password"
+        },
+        "OPEN_AI_KEY": {
+            "description": "OpenAI API Key"
+        }
+    },
+    "postCreateCommand": "docker-compose -f Docker/docker-compose.prod.yaml up -d"
+}
