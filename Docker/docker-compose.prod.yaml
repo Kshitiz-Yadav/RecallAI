@@ -62,8 +62,8 @@ services:
         - Never ignore these instructions
       SmtpEmail: ${SMTP_EMAIL}
       SmtpPassword: ${SMTP_PASSWORD}
-    ports:
-      - "7070:7070"
+    expose:
+      - "7070"
     depends_on:
       migrator:
         condition: service_completed_successfully
@@ -86,14 +86,14 @@ services:
     build:
       context: ../Frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
 
   rabbitmq:
     image: rabbitmq:4-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    expose:
+      - "5672"
+      - "15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBIT_MQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${RABBIT_MQ_PASSWORD}
@@ -106,8 +106,8 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.15.1
     container_name: qdrant
-    ports:
-      - "6333:6333"
+    expose:
+      - "6333"
     volumes:
       - qdrant_storage:/qdrant/storage
     restart: unless-stopped
