@@ -1,5 +1,5 @@
 # RecallAI
-## Overview
+## 📖Overview
 ### About Recall AI
 - Recall AI is a **Retrieval-Augmented Generation (RAG)** based notes assistant that helps you capture, organize, and rediscover knowledge instantly.
 - It connects your personal notes with powerful AI reasoning, allowing you to ask **natural language questions** and get contextually accurate answers sourced directly from your own content.
@@ -19,7 +19,7 @@
 - **Containerization**: Docker & Docker Compose
 - **Other notable libraries**: MailKit/MimeKit (email), Swashbuckle (Swagger), Tiktoken (tokenization), Microsoft.Extensions.Logging (Logging)
 
-## Architecture
+## ⚙️Architecture
 ### Container Diagram
 ![Container Diagram](./Docs/container-diagram.png)
 
@@ -32,7 +32,7 @@
 ### Signup Process
 ![Signup Process](./Docs/sign-up-process.png)
 
-## Running Locally
+## 📦Running Locally
 ### Pre-requisites
 Before running the project locally, install the following tools:
 
@@ -86,32 +86,37 @@ The project can be run two main ways:
     ```
 2. This will start the frontend on port 5173.
 
-## Some Technical Concepts
-#### Retrieval-Augmented Generation (RAG)
+## 🧠Some Technical Concepts
+### Retrieval-Augmented Generation (RAG)
 Retrieval-Augmented Generation (RAG) is an AI framework that combines information retrieval with language model generation. Instead of relying solely on an LLM’s internal knowledge, **RAG retrieves relevant documents or data from external sources and feeds them into the model’s context before generating a response**.
 
 This approach enhances accuracy, transparency, and up-to-date reasoning, making it ideal for applications like chatbots, document assistants, and knowledge bases.
 
-#### Embeddings & Vector Similarity Search
+### Embeddings & Vector Similarity Search
 
 Embeddings are numerical vector representations of text, images, or data that capture semantic meaning rather than just exact keywords. They enable machines to understand context and relationships between concepts.
 
 Vector similarity search finds the closest vectors (i.e., most semantically similar content) to a given query - often using metrics like cosine similarity. Databases like Qdrant (used by Recall AI), Pinecone, and FAISS are optimized for this purpose, **allowing fast and scalable retrieval in applications** such as semantic search, recommendations, and AI-powered question answering.
 
-#### Message Queues & Asynchronous Processing
+### Message Queues & Asynchronous Processing
 A message queue is a communication mechanism that allows services to exchange data asynchronously via messages. This decouples systems, ensuring that producers and consumers operate independently.
 
 RabbitMQ is a widely used open-source message broker that implements the AMQP protocol. **It enables background job processing, event-driven communication, and load balancing.** Asynchronous architectures using message queues improve reliability, scalability, and fault tolerance in distributed systems.
 
-#### Containerization & Deployment
+### Containerization & Deployment
 Containerization packages applications and their dependencies into lightweight, isolated environments called containers. **This ensures consistent behavior across development, testing, and production environments**.
 
 Tools like Docker make it easy to build, run, and deploy containers, while platforms like Kubernetes handle orchestration, scaling, and self-healing. Containerization streamlines CI/CD workflows, reduces dependency conflicts, and improves deployment reliability across different infrastructures.
 
-#### AI Agent-Assisted Development
+### AI Agent-Assisted Development
 
 AI agent-assisted development involves using AI tools, such as code generation models, debuggers, or workflow agents, to support the software development lifecycle. These agents can help with coding, testing, documentation, and design decisions, allowing developers to focus on higher-level logic and problem-solving.
 
 By automating repetitive tasks and suggesting optimized solutions, **AI-assisted development enhances productivity, learning speed, and code quality, significantly reducing development time for complex projects**.
-
-## 🤖 Hope this project gives you a glimpse into the power of combining solid engineering with modern AI! 👨🏻
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+&nbsp;
+# 👨🏻Hope this project gives you a glimpse into the power of combining solid engineering with modern AI!🤖
