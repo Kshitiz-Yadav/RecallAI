@@ -1,0 +1,36 @@
+@startuml
+title User Sign Up Process - RecallAI
+
+actor User as U
+participant "React Frontend" as FE
+participant "Backend API (.NET)" as API
+participant "Postgres DB" as DB
+participant "Email Service" as EM
+
+' Sign up
+activate U
+U -> FE : Enters Username and Password
+activate FE
+FE -> API : POST /register (username, password)
+activate API
+API -> DB : Creates entry for user
+activate DB
+API -> EM : OTP Email Request
+activate EM
+EM -> U : Sends OTP via Email
+deactivate EM
+U -> FE : Enters OTP
+FE -> API : POST /verify-otp (otp)
+API -> DB : Marks user as verified
+
+' Login
+U -> FE : Enters Username and Password
+FE -> API : POST /login (username, password)
+API -> DB : Checks credentials
+DB -> API : Credentials matched / mismatched
+deactivate DB
+API -> FE : Login Success / Failure
+deactivate API
+deactivate FE
+
+@enduml
