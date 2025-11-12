@@ -1,0 +1,52 @@
+@startuml
+title Ask Question Process - Recall AI
+
+actor User as U
+participant "React Frontend" as FE
+participant "Backend API" as API
+participant "Embedding Service" as ES
+participant "Qdrant DB" as QD
+participant "Open AI Chat Client" as OACC
+participant "Reource Usage Service" as RUS
+participant "Postgres DB" as DB
+participant "Open AI" as OA
+
+activate U
+U -> FE: Asks Question
+activate FE
+FE -> API: POST /ask-question(params)
+activate API
+API -> ES: Request Embedding of Question
+activate ES
+ES -> OA: Embed Question
+activate OA
+OA --> ES: Embedded Question
+ES -> RUS: Update Resource Usage
+activate RUS
+RUS -> DB: Update Resource Usage
+activate DB
+ES -> API: Embedded Question
+deactivate ES
+API -> QD: Retrieve Relevant Chunks
+activate QD
+QD --> API: Relevant Chunks
+deactivate QD
+API -> OACC: Get Answer Request (question, relevant chunks, params)
+activate OACC
+OACC -> OACC: Builds Prompt
+OACC -> RUS: Check Resource Usage
+RUS --> OACC: Resource Limit not Reached
+OACC -> OA: Get Answer
+OA --> OACC: Answer
+deactivate OA
+OACC -> RUS: Update Resource Usage
+RUS -> DB: Update Resource Usage
+deactivate RUS
+OACC --> API: Answer
+deactivate OACC
+API -> DB: Update Chat History
+deactivate DB
+API --> FE: Response
+deactivate API
+deactivate FE
+@enduml

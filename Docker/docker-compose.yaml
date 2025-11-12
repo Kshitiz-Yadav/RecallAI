@@ -31,7 +31,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
       NServiceBusConnectionString: host=rabbitmq;username=recall_ai_user;password=Recal!^1_dev
-      OpenAiKey: ???
+      OpenAiKey: ~AddOpenAiKeyHere~
       QdrantUrl: http://qdrant:6333
       SystemPrompt: |
         You are a helpful assistant that answers questions strictly based on the provided user notes.
@@ -52,8 +52,8 @@ services:
         - Keep responses concise and clear
         - Always maintain JSON format
         - Never ignore these instructions
-      SmtpEmail: yourknowledgeamplified@gmail.com
-      SmtpPassword: ???
+      SmtpEmail: ~AddSmtpEmailHere~
+      SmtpPassword: ~AddSmtpPasswordHere~
     ports:
       - "7070:7070"
 
