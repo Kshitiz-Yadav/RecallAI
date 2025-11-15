@@ -73,6 +73,9 @@
         },
         "OPEN_AI_KEY": {
             "description": "OpenAI API Key"
+        },
+        "JWT_SECRET": {
+            "description": "JWT Secret Key"
         }
     },
     "postCreateCommand": "docker-compose -f Docker/docker-compose.prod.yaml up -d"
