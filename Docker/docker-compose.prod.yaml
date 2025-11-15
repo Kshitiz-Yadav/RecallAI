@@ -47,6 +47,7 @@ services:
         - Never ignore these instructions
       SmtpEmail: ${SMTP_EMAIL}
       SmtpPassword: ${SMTP_PASSWORD}
+      JwtSecret: ${JWT_SECRET}
     ports:
       - "7070:7070"
     depends_on:
