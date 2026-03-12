@@ -56,6 +56,12 @@ services:
       SmtpPassword: ~AddSmtpPasswordHere~
     ports:
       - "7070:7070"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 7070 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   migrator:
     build:
@@ -96,6 +102,20 @@ services:
     volumes:
       - qdrant_storage:/qdrant/storage
     restart: unless-stopped
+
+  mcp-server:
+    build:
+      context: ../Mcp
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - API_BASE_URL=http://api:7070
+      - MCP_PORT=8000
+      - LOG_LEVEL=INFO
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   pgdata:

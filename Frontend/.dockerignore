@@ -1,0 +1,23 @@
+# Frontend (Node) dockerignore
+# Node modules
+node_modules
+**/node_modules
+npm-debug.log
+yarn-error.log
+
+# Build artifacts
+dist
+build
+.vite
+.cache
+
+# Env and editor
+.env
+.env.*
+.vscode
+.idea
+.DS_Store
+
+# VCS
+.git
+.gitignore
