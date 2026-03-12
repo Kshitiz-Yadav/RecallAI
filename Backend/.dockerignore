@@ -1,0 +1,35 @@
+# Backend (.NET) dockerignore
+# Version control
+.git
+.gitignore
+
+# Build outputs
+bin/
+obj/
+**/bin/
+**/obj/
+artifacts/
+packages/
+*.nupkg
+*.snupkg
+
+# IDE and user files
+.vs
+.vscode
+*.suo
+*.user
+
+# NuGet
+.nuget/
+project.lock.json
+packages.config
+
+# Logs and env
+*.log
+.env
+*.db
+
+# Common dev artifacts
+node_modules
+__pycache__
+*.py[cod]

@@ -20,6 +20,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /out ./
 
+# Needed for docker-compose TCP healthcheck
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
 # Default port exposed (adjust if needed)
 EXPOSE 7070
 ENTRYPOINT ["dotnet", "API.dll"]

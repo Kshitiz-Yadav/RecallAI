@@ -1,0 +1,22 @@
+# Mcp (Python) dockerignore
+# Virtualenvs and caches
+.venv
+venv
+*/.venv
+__pycache__
+*.py[cod]
+*.pyo
+pip-wheel-metadata
+*.egg-info
+
+# Env and editor
+.env
+.env.*
+.vscode
+.DS_Store
+.git
+.gitignore
+
+# Build artifacts
+build
+dist
