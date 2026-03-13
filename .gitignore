@@ -4,6 +4,6 @@ Backend/**/obj/
 Backend/**/out/
 *.user
 *.csproj.user
-Mcp/.venv/
-Mcp/__pycache__/
-Mcp/.env
+Mcp/**/.venv/
+Mcp/**/__pycache__
+Mcp/**/.env

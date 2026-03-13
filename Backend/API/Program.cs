@@ -1,6 +1,8 @@
-﻿using API;
+using API;
+using API.Auth;
 using API.Data;
 using API.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +27,29 @@ builder.Services.AddCors(options =>
 });
 
 // Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = "UserAuth";
+    })
+    .AddPolicyScheme("UserAuth", "UserAuth", options =>
+    {
+        options.ForwardDefaultSelector = context =>
+        {
+            if (context.Request.Headers.ContainsKey("X-License-Key"))
+            {
+                return LicenseKeyAuthenticationHandler.SchemeName;
+            }
+
+            var auth = context.Request.Headers["Authorization"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(auth) && auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                return JwtBearerDefaults.AuthenticationScheme;
+            }
+
+            return JwtBearerDefaults.AuthenticationScheme;
+        };
+    })
     .AddJwtBearer(options =>
     {
         var key = Encoding.ASCII.GetBytes(appSettings.JwtSecret);
@@ -36,8 +60,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ClockSkew = TimeSpan.Zero
-        }; 
-    });
+        };
+    })
+    .AddScheme<AuthenticationSchemeOptions, LicenseKeyAuthenticationHandler>(
+        LicenseKeyAuthenticationHandler.SchemeName,
+        _ => { });
 
 // Controllers
 builder.Services.AddControllers();

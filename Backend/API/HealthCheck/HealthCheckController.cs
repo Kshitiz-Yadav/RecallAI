@@ -1,7 +1,7 @@
 ﻿using API.Data;
-using API.Data.Domain;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using static API.ApiResponseResolver;
 
 namespace API.HealthCheck;
 
@@ -22,6 +22,6 @@ public class HealthCheckController : Controller
     public IActionResult HealthCheck()
     {
         _logger.LogInformation("Health check triggered");
-        return new OkObjectResult("All is well!");
+        return ProcessApiResponse(HttpStatusCode.OK, "Ready to amplify, Recall AI!");
     }
 }

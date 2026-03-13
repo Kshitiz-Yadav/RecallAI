@@ -17,6 +17,8 @@ public class DatabaseContext : DbContext
 
     public DbSet<UserAccountVerification> UserAccountVerification { get; set; }
 
+    public DbSet<LicenseKey> LicenseKeys { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Usage>().HasKey(u => new { u.UserId, u.Resource, u.Month });
