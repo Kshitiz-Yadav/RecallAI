@@ -57,7 +57,7 @@ public class LicenseKeyController : Controller
         return ProcessApiResponse(
             HttpStatusCode.Created,
             "This is the only time you will see this license key. Store it securely.",
-            new GetLicenseKeyResponse { Key = plainKey });
+            plainKey);
     }
 
     [HttpGet("keys")]
@@ -66,7 +66,7 @@ public class LicenseKeyController : Controller
         var userId = GetUserId(User);
 
         var names = await _dbContext.LicenseKeys.Where(a => a.UserId == userId && a.IsActive).Select(a => a.Name).ToListAsync();
-        return ProcessApiResponse(HttpStatusCode.OK, null, new LicenseKeysResponse { Names = names });
+        return ProcessApiResponse(HttpStatusCode.OK, null, new GetLicenseKeysResponse { Names = names });
     }
 
     [HttpPut("revoke/{keyName}")]
