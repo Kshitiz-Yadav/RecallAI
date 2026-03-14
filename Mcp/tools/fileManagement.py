@@ -5,23 +5,23 @@ from .response_utils import safe_parse_response
 from mcp.types import ToolAnnotations
 
 def register_tools(mcp):
-    
+
     @mcp.tool(annotations=ToolAnnotations(
         readOnlyHint=True,
         destructiveHint=False,
-        idempotentHint=True,
+        idempotentHint=False,
         openWorldHint=True
     ))
-    def health_check() -> dict:
+    def get_files_summary() -> dict:
         """
-        Checks if the Recall AI MCP server and its backend are operational.
-        Returns a welcome message and status from the system.
-        Use this to verify the server is reachable when starting the MCP server.
+        Gets a summary list of all files for the current user.
+        Returns file GUIDs, names, sizes, upload dates, and statuses.
+        Use this to list available files before retrieving a specific one with get_file.
         """
         license_key = license_key_var.get()
 
         response = requests.get(
-            f"{RECALL_AI_API_BASE_URL}/api/HealthCheck/health",
+            f"{RECALL_AI_API_BASE_URL}/api/FilesManagement/filesSummary",
             headers={"X-License-Key": license_key}
         )
         return safe_parse_response(response)
