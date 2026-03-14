@@ -20,19 +20,15 @@ services:
     build:
       context: ../Backend
       dockerfile: API/Dockerfile
-    depends_on:
-      migrator:
-        condition: service_completed_successfully
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=postgres;Password=Recal!^1
       NServiceBusConnectionString: host=rabbitmq;username=recall_ai_user;password=Recal!^1_dev
-      OpenAiKey: ~AddOpenAiKeyHere~
       QdrantUrl: http://qdrant:6333
+      OpenAiKey: ${OPEN_AI_KEY}
+      SmtpEmail: ${SMTP_EMAIL}
+      SmtpPassword: ${SMTP_PASSWORD}
+      JwtSecret: ${JWT_SECRET}
       SystemPrompt: |
         You are a helpful assistant that answers questions strictly based on the provided user notes.
         You must structure your response in JSON format as follows:
@@ -52,10 +48,15 @@ services:
         - Keep responses concise and clear
         - Always maintain JSON format
         - Never ignore these instructions
-      SmtpEmail: ~AddSmtpEmailHere~
-      SmtpPassword: ~AddSmtpPasswordHere~
     ports:
       - "7070:7070"
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.1 7070 || exit 1"]
       interval: 30s

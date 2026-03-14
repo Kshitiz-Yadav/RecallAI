@@ -21,11 +21,14 @@ services:
       context: ../Backend
       dockerfile: API/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
       DatabaseConnectionString: Host=database;Port=5432;Database=Recall_DB;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD}
       NServiceBusConnectionString: host=rabbitmq;username=${RABBIT_MQ_USERNAME};password=${RABBIT_MQ_PASSWORD}
-      OpenAiKey: ${OPEN_AI_KEY}
       QdrantUrl: http://qdrant:6333
+      OpenAiKey: ${OPEN_AI_KEY}
+      SmtpEmail: ${SMTP_EMAIL}
+      SmtpPassword: ${SMTP_PASSWORD}
+      JwtSecret: ${JWT_SECRET}
       SystemPrompt: |
         You are a helpful assistant that answers questions strictly based on the provided user notes.
         You must structure your response in JSON format as follows:
@@ -45,9 +48,6 @@ services:
         - Keep responses concise and clear
         - Always maintain JSON format
         - Never ignore these instructions
-      SmtpEmail: ${SMTP_EMAIL}
-      SmtpPassword: ${SMTP_PASSWORD}
-      JwtSecret: ${JWT_SECRET}
     ports:
       - "7070:7070"
     depends_on:
@@ -57,6 +57,12 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 7070 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   migrator:
     build:
@@ -97,6 +103,20 @@ services:
     volumes:
       - qdrant_storage:/qdrant/storage
     restart: unless-stopped
+
+  mcp-server:
+    build:
+      context: ../Mcp
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - API_BASE_URL=http://api:7070
+      - MCP_PORT=8000
+      - LOG_LEVEL=INFO
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   pgdata:

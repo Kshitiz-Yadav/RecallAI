@@ -12,6 +12,9 @@
         },
         "ghcr.io/devcontainers/features/node:1": {
             "version": "18"
+        },
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.12"
         }
     },
     "customizations": {
@@ -20,11 +23,20 @@
                 "ms-dotnettools.csharp",
                 "ms-azuretools.vscode-docker",
                 "dbaeumer.vscode-eslint",
-                "esbenp.prettier-vscode"
+                "esbenp.prettier-vscode",
+                "ms-python.python",
+                "ms-python.vscode-pylance"
             ]
         }
     },
-    "forwardPorts": [3000, 7070, 6333, 5672, 15672],
+    "forwardPorts": [
+        3000,
+        7070,
+        6333,
+        5672,
+        15672,
+        8000
+    ],
     "portsAttributes": {
         "3000": {
             "label": "Frontend",
@@ -48,6 +60,11 @@
         },
         "15672": {
             "label": "RabbitMQ Management",
+            "protocol": "http",
+            "visibility": "public"
+        },
+        "8000": {
+            "label": "MCP Server",
             "protocol": "http",
             "visibility": "public"
         }
