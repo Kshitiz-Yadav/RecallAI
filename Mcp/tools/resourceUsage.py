@@ -2,10 +2,16 @@ import requests
 from middleware import license_key_var
 from config import RECALL_AI_API_BASE_URL
 from .response_utils import safe_parse_response
+from mcp.types import ToolAnnotations
 
 def register_tools(mcp):
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True
+    ))
     def get_resource_limits() -> dict:
         """
         Gets resource limits, no input needed.
@@ -20,7 +26,12 @@ def register_tools(mcp):
         )
         return safe_parse_response(response)
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=False,
+        openWorldHint=True
+    ))
     def get_current_month_usage() -> dict:
         """
         Gets the current month's usage for the authenticated user, no input needed.

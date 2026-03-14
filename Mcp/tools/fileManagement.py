@@ -2,10 +2,16 @@ import requests
 from middleware import license_key_var
 from config import RECALL_AI_API_BASE_URL
 from .response_utils import safe_parse_response
+from mcp.types import ToolAnnotations
 
 def register_tools(mcp):
 
-    @mcp.tool()
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=False,
+        openWorldHint=True
+    ))
     def get_files_summary() -> dict:
         """
         Gets a summary list of all files for the current user.
