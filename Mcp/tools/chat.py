@@ -1,6 +1,6 @@
 import requests
 from middleware import license_key_var
-from typing import Annotated
+from typing import Annotated, Optional
 from pydantic import Field
 from config import RECALL_AI_API_BASE_URL
 from .response_utils import safe_parse_response
@@ -41,7 +41,7 @@ def register_tools(mcp):
     ))
     def ask_question(
         question: Annotated[str, Field(description="The question to ask the AI against the knowledge base.")],
-        file_guids: Annotated[list, Field(description="Optional list of file GUIDs to scope the search to specific documents. Pass null to search all documents.")] = None,
+        file_guids: Annotated[Optional[list], Field(description="Optional list of file GUIDs to scope the search to specific documents. Pass null to search all documents.")] = None,
         top_k: Annotated[int, Field(description="Number of the most relevant chunks to retrieve from the knowledge base. Higher values give more context but slower responses. Defaults to 5.")] = 5,
         chat_model: Annotated[ChatModel, Field(description="The AI model to use. Prefer lower models (Gpt4oMini, Gpt41Mini) unless the user requests a specific one.")] = ChatModel.Gpt4oMini,
         max_words: Annotated[int, Field(description="Maximum number of words in the generated answer. Defaults to 500.")] = 500
@@ -50,6 +50,7 @@ def register_tools(mcp):
         Asks a question from the existing files (question: str, file_guids: list|None, top_k: int, chat_model: int, max_words: int). Do not change the chat_model and max_words unless the user specifically agrees to.
         Returns the chat response object from the backend, including the LLM answer and any metadata.
         Use this to submit a user question and retrieve a generated answer.
+        IMPORTANT: Always use default values for top_k, chat_model, and max_words unless the user explicitly requests otherwise. Do not change these parameters on your own judgment.
         """
         license_key = license_key_var.get()
 
