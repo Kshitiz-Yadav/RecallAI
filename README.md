@@ -3,9 +3,10 @@
 ### About Recall AI
 - Recall AI is a **Retrieval-Augmented Generation (RAG)** based notes assistant that helps you capture, organize, and rediscover knowledge instantly.
 - It connects your personal notes with powerful AI reasoning, allowing you to ask **natural language questions** and get contextually accurate answers sourced directly from your own content.
-- Built with a modern technologies, Recall AI provides a smooth **full-stack experience**.
+- Built with modern technologies, Recall AI provides a smooth **full-stack experience**.
 - Users can upload documents, notes, or files, which are securely stored in the database. Each file is processed to generate embeddings for semantic understanding, allowing the assistant to retrieve relevant content and generate **precise responses**.
 - A background RabbitMQ message queue powers **asynchronous file event handling**, ensuring that file uploads and deletions are processed efficiently while keeping the system responsive.
+- Recall AI exposes its RAG functionality via a **Model Context Protocol (MCP) server**, allowing any MCP-compatible AI agent to query your knowledge base directly using natural language. See more: [Recall AI MCP](./Mcp/README.md)
 - The system architecture is designed for **scalability and modularity with efficient logging**. The architecture separates concerns between the frontend, API, database, and background worker, allowing each to scale independently. Components communicate through APIs and message queues, enabling horizontal scaling and resilience.
 
 > **Fun Fact:** Recall AI was originally planned as a 12-week project (~120 hours of work)!
@@ -14,6 +15,7 @@
 ### Tech stack
 - **Backend**: .NET 8 (C#), Entity Framework Core, NServiceBus
 - **Frontend**: React + Tailwind CSS
+- **MCP Server**: Python, FastMCP, Uvicorn
 - **Storage Services**: PostgreSQL (relational), Qdrant (vector store)
 - **Messaging**: RabbitMQ
 - **Containerization**: Docker & Docker Compose
@@ -43,7 +45,7 @@ Before running the project locally, install the following tools:
 ### Setup Steps
 The project can be run two main ways: 
 - with Docker Compose (recommended)
-- by running backend and frontend separately (for development)
+- by running components separately (for development)
 
 #### Runing the full stack using Docker Compose
 1. Populate the Open AI Key and SMTP details in the `Docker/docker-compose.yaml` file.
@@ -58,6 +60,7 @@ The project can be run two main ways:
 3. This will start the containers and the services will be available on the following ports:
     - Backend: 7070
     - Frontend: 3000
+    - MCP Server: 8000
     - PostgreSQL: 5432
     - RabbitMQ: 5672 (AMQP) and 15672 (management)
     - Qdrant: 6333
@@ -86,9 +89,12 @@ The project can be run two main ways:
     ```
 2. This will start the frontend on port 5173.
 
+##### MCP Server:
+For detailed instructions on running, configuring, and connecting the MCP server to an AI agent, see [MCP Server Locally](./Mcp/README.md/#running-locally).
+
 ## 🧠Some Technical Concepts
 ### Retrieval-Augmented Generation (RAG)
-Retrieval-Augmented Generation (RAG) is an AI framework that combines information retrieval with language model generation. Instead of relying solely on an LLM’s internal knowledge, **RAG retrieves relevant documents or data from external sources and feeds them into the model’s context before generating a response**.
+Retrieval-Augmented Generation (RAG) is an AI framework that combines information retrieval with language model generation. Instead of relying solely on an LLM's internal knowledge, **RAG retrieves relevant documents or data from external sources and feeds them into the model's context before generating a response**.
 
 This approach enhances accuracy, transparency, and up-to-date reasoning, making it ideal for applications like chatbots, document assistants, and knowledge bases.
 
@@ -107,6 +113,11 @@ RabbitMQ is a widely used open-source message broker that implements the AMQP pr
 Containerization packages applications and their dependencies into lightweight, isolated environments called containers. **This ensures consistent behavior across development, testing, and production environments**.
 
 Tools like Docker make it easy to build, run, and deploy containers, while platforms like Kubernetes handle orchestration, scaling, and self-healing. Containerization streamlines CI/CD workflows, reduces dependency conflicts, and improves deployment reliability across different infrastructures.
+
+### Model Context Protocol (MCP)
+The Model Context Protocol (MCP) is an open standard that allows AI agents to interact with external tools and data sources in a structured, interoperable way. Instead of building custom integrations for each AI client, **MCP provides a single protocol that any compatible agent can use to discover and call tools**.
+
+Recall AI's MCP server exposes its RAG functionality — such as semantic search, document listing, and question answering — as MCP tools. This means any MCP-compatible AI agent, whether a developer IDE like Cursor, an AI assistant like Claude Desktop, or a custom-built agent, can query your personal knowledge base directly without any additional integration work.
 
 ### AI Agent-Assisted Development
 

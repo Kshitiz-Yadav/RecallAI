@@ -5,6 +5,7 @@
 System_Boundary(s1, "RecallAI System") {
     Container(webApp, "React Frontend", "React + JavaScript", "User facing web app.")
     Container(api, "Backend API", "C#/.NET", "Handles authentication and business logic.")
+    Container(mcp, "MCP Server", "Python/FastMCP", "Exposes RAG tools over HTTP for AI agents.")
     ContainerDb(db, "Postgres Database", "PostgreSQL", "Stores user data, files, chat history and resource usage.")
     ContainerDb(qdrant, "Qdrant Vector DB", "Qdrant", "Stores embeddings for semantic search.")
     ContainerQueue(queue, "RabbitMQ", "Message Broker", "Queues file-related events")
@@ -12,14 +13,17 @@ System_Boundary(s1, "RecallAI System") {
 
 ' External systems
 Person(user, "User", "A registered user of the RecallAI system")
+Person(aiAgent, "AI Agent", "External AI Agent (Needs a registered User)")
 System_Ext(openai, "OPEN AI", "Used for semantic questioning.")
 
 ' Relationships
-Rel_Right(user, webApp, "Uses")
+Rel_Right(user, webApp, "Interacts via UI or APIs")
+Rel_Left(aiAgent, mcp, "Calls MCP tools over HTTP")
 Rel_Right(webApp, api, "Calls REST APIs")
-Rel_Up(api, db, "Reads/Writes data")
-Rel_Right(api, queue, "Publishes and consumes file events")
-Rel_Up(api, qdrant, "Stores and retrieves embeddings")
+Rel_Left(mcp, api, "Calls REST APIs")
+BiRel_Up(api, db, "Reads/Writes data")
+BiRel_Up(api, queue, "Publishes and consumes file events")
+BiRel_Up(api, qdrant, "Stores and retrieves embeddings")
 Rel_Down(api, openai, "Calls REST APIs")
 
 @enduml
