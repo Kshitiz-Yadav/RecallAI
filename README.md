@@ -9,7 +9,7 @@
 - Recall AI exposes its RAG functionality via a **Model Context Protocol (MCP) server**, allowing any MCP-compatible AI agent to query your knowledge base directly using natural language. See more: [Recall AI MCP](./Mcp/README.md)
 - The system architecture is designed for **scalability and modularity with efficient logging**. The architecture separates concerns between the frontend, API, database, and background worker, allowing each to scale independently. Components communicate through APIs and message queues, enabling horizontal scaling and resilience.
 
-> **Fun Fact:** Recall AI was originally planned as a 12-week project (~120 hours of work)!
+> **Fun Fact:** Recall AI was originally planned as a ~120 hour project!
 > Using AI agents, the project was completed in ~90 hours, **25% faster than expected**, while maintaining full functionality and architectural scalability. 😎
 
 ### Tech stack
@@ -20,6 +20,49 @@
 - **Messaging**: RabbitMQ
 - **Containerization**: Docker & Docker Compose
 - **Other notable libraries**: MailKit/MimeKit (email), Swashbuckle (Swagger), Tiktoken (tokenization), Microsoft.Extensions.Logging (Logging)
+
+## Screenshots
+### API Swagger
+<p align="center">
+    <a href="Docs/Screenshots/ApiSwagger.png">
+        <img src="Docs/Screenshots/ApiSwagger.png" width="50%" />
+    </a>
+</p>
+
+### MCP Usage
+<p align="center">
+    <a href="Docs/Screenshots/McpUsageInCursor.png">
+        <img src="Docs/Screenshots/McpUsageInCursor.png" width="50%" />
+    </a>
+</p>
+
+### UI Interface
+<p align="center">
+    <a href="Docs/Screenshots/SignUp.png">
+        <img src="Docs/Screenshots/SignUp.png" width="30%" />
+    </a>
+    <a href="Docs/Screenshots/FilesManagement.png">
+        <img src="Docs/Screenshots/FilesManagement.png" width="30%" />
+    </a>
+    <a href="Docs/Screenshots/HomePage.png">
+        <img src="Docs/Screenshots/HomePage.png" width="30%" />
+    </a>
+</p>
+
+<p align="center">
+    <a href="Docs/Screenshots/ChatScreen.png">
+        <img src="Docs/Screenshots/ChatScreen.png" width="30%" />
+    </a>
+    <a href="Docs/Screenshots/ChatHistory.png">
+        <img src="Docs/Screenshots/ChatHistory.png" width="30%" />
+    </a>
+    <a href="Docs/Screenshots/ResourceUsage.png">
+        <img src="Docs/Screenshots/ResourceUsage.png" width="30%" />
+    </a>
+</p>
+
+<p align="center">
+</p>
 
 ## ⚙️Architecture
 ### Container Diagram
